@@ -6,4 +6,3 @@ streamlit-chat
 langchain
 openai
 tiktoken
-zip

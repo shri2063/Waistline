@@ -6,7 +6,6 @@ from streamlit_cropper import st_cropper
 from PIL import Image, ImageOps
 from llm_response import run_llm
 from streamlit_chat import message
-from zipfile import ZipFile
 import os
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
@@ -57,8 +56,8 @@ if img_folder:
     with open("temp.zip", "wb") as f:
         f.write(img_folder.read())
     # Extract all contents of zip folder to a temporary folder
-    with  ZipFile("temp.zip", "r") as zip_ref:
-        zip_ref.extractall("predict")
+    #with  ZipFile("temp.zip", "r") as zip_ref:
+        #zip_ref.extractall("predict")
     st.success("Folder uploaded and extracted successfully")
 
 
@@ -84,17 +83,17 @@ if download_images:
 
     with st.spinner(f"Creating {zip_file_name}.... "):
         st.write("Downloading...")
-        with ZipFile(zip_file_name, 'w') as zipf:
-            for image_file in image_files:
-                image_path = os.path.join(directory, image_file)
-                zipf.write(image_path, os.path.basename(image_file))
-        with open(zip_file_name, "rb") as f:
-            zip_contents = f.read()
+        #with ZipFile(zip_file_name, 'w') as zipf:
+            #for image_file in image_files:
+               # image_path = os.path.join(directory, image_file)
+               # zipf.write(image_path, os.path.basename(image_file))
+       # with open(zip_file_name, "rb") as f:
+            #zip_contents = f.read()
 
         # Encode the zip file as base64
-        zip_b64 = base64.b64encode(zip_contents).decode()
-        href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
-        st.markdown(href, unsafe_allow_html=True)
+        #zip_b64 = base64.b64encode(zip_contents).decode()
+        #href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
+        #st.markdown(href, unsafe_allow_html=True)
 
 
 if img_file:
