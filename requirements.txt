@@ -6,8 +6,7 @@ streamlit-chat
 langchain
 openai
 tiktoken
-opencv-contrib-python
-opencv-python-headless==4.5.5.64
+opencv-python-headless==4.5.3.56
 roboflow
 ultralytics
 scikit-learn
