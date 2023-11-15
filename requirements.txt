@@ -7,4 +7,3 @@ langchain
 openai
 tiktoken
 zip
-opencv-python

@@ -8,7 +8,6 @@ from llm_response import run_llm
 from streamlit_chat import message
 from zipfile import ZipFile
 import os
-import cv2
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
