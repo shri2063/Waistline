@@ -2,6 +2,8 @@ import streamlit as st
 import numpy as np
 from streamlit_cropper import st_cropper
 from PIL import Image
+from llm_response import run_llm
+from streamlit_chat import message
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
@@ -28,6 +30,38 @@ return_type_dict = {
     "Rect coords": "box"
 }
 return_type = return_type_dict[return_type_choice]
+
+st.header("Ice breaker Helper Bot")
+# st.session_state.widget = ''
+i = 45
+
+if "user_prompt_history" not in st.session_state:
+    st.session_state["user_prompt_history"] = []
+if "chat_answers_history" not in st.session_state:
+    st.session_state["chat_answers_history"] = []
+if "issue" not in st.session_state:
+    st.session_state.issue = 'sizing'
+
+
+def submit(elseif=None):
+    with st.spinner("Generating response...."):
+        print("Session State " + str(st.session_state))
+        cust_query = st.session_state.widget
+        generated_response = run_llm(query=cust_query)
+        print(generated_response)
+        if "Sizing Issue" in str(generated_response):
+            st.session_state.issue = 'sizing'
+            print("Session State: " + str(st.session_state.issue))
+        elif "Quality Issue" in str(generated_response):
+            st.session_state.issue = 'quality'
+            print("Session State: " + str(st.session_state.issue))
+
+        st.session_state["user_prompt_history"].append(cust_query)
+        st.session_state["chat_answers_history"].append(generated_response)
+
+st.text_input("Prompt", key="widget", placeholder="Enter your prompt here ..", on_change=submit)
+
+st.set_option('deprecation.showfileUploaderEncoding', False)
 
 if img_file:
     img = Image.open(img_file)
@@ -63,3 +97,10 @@ if img_file:
         st.write("Preview")
         _ = cropped_img.thumbnail((150, 150))
         st.image(cropped_img)
+if st.session_state["chat_answers_history"]:
+    for generated_response, user_query in zip(st.session_state["chat_answers_history"],
+                                              st.session_state["user_prompt_history"]):
+        i = i + 1
+        message(user_query, is_user=True, key=i.__str__())
+        i = i + 1
+        message(generated_response, key=i.__str__())
