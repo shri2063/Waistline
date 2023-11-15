@@ -5,3 +5,4 @@ streamlit-cropper
 streamlit-chat
 langchain
 openai
+tiktoken
