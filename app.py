@@ -129,11 +129,87 @@ if img_file:
     SHOULDER = []
     TSHIRT = []
 
+    if st.button('Submit'):
+        print("Session State: " + str(st.session_state))
+        if st.session_state.issue == "sizing":
+            directory = "predict/images"
+            image_files = [f for f in os.listdir(directory)]
+            for image_file in image_files:
+                print(image_file)
+                img = Image.open(os.path.join(directory, image_file))
+                raw_image = np.asarray(img).astype('uint8')
+                bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
+                cv2.imwrite('sizing_img.jpg', bgr_image)
+                predictions = model_json_prediction_for_sizing_issue("sizing_img.jpg")
+                predictions = get_corner_coordinates_for_tshirt(predictions)
+                corrected_predictions = correct_class_for_sleeves(predictions)
+                # print("Corrected Predictions")
+                # print(corrected_predictions)
+                chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(corrected_predictions)
+                CHEST.append(chest_length)
+                SHOULDER.append(shoulder_length)
+                TSHIRT.append(tshirt_length)
 
+            print(f"chest: " + str(sum(CHEST) / len(CHEST)))
+            print(f"shoulder: " + str(sum(SHOULDER) / len(SHOULDER)))
+            print(f"tshirt: " + str(sum(TSHIRT) / len(TSHIRT)))
 
+        if st.session_state.issue == "quality":
+            print("Session State: " + str(st.session_state))
+            st.session_state["user_prompt_history"] = []
+            st.session_state["chat_answers_history"] = []
+            st.write('We are working on your query. Please wait.')
 
+            raw_image = np.asarray(img).astype('uint8')
+            left, top, width, height = tuple(map(int, rect.values()))
+            input_box = Box(
+                x=left,
+                y=top,
+                width=width,
+                height=height
+            )
+            scaled_cropped_img = get_scaled_cropped_img(raw_image, top, left, height, width, scale_input)
+            bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
+            cv2.imwrite('scaled_cropped_img.jpg', bgr_image)
+            model = yolo_tushar()
+            iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+            result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
+            message(generated_response, key=i.__str__())
 
+    if st.button('Retry'):
+        st.session_state["user_prompt_history"] = []
+        st.session_state["chat_answers_history"] = []
+        st.write('We are working on your query. Please wait.')
 
+        raw_image = np.asarray(img).astype('uint8')
+        left, top, width, height = tuple(map(int, rect.values()))
+        input_box = Box(
+            x=left,
+            y=top,
+            width=width,
+            height=height
+        )
+        scaled_cropped_img = get_scaled_cropped_img(raw_image, top, left, height, width, scale_input)
+        bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
+        cv2.imwrite('scaled_cropped_img.jpg', bgr_image)
+        model = yolo_chirag()
+        iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+        result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
+        if result == True:
+            generated_response = "Apologies for my earlier reply. " + generated_response
+        message(generated_response, key=i.__str__())
+
+if st.button('Check result'):
+    if model == "blue":
+        model = yolo_tushar()
+    else:
+        model = yolo_chirag()
+
+    st.write('We are working on your query. Please wait.')
+    predicted_image_file = model_img_prediction(model, 'scaled_cropped_img.jpg')
+    predicted_image = Image.open(predicted_image_file)
+    predicted_image = np.asarray(predicted_image).astype('uint8')
+    st.image(Image.fromarray(predicted_image), caption='Predicted Image')
 
 if st.session_state["chat_answers_history"]:
     for generated_response, user_query in zip(st.session_state["chat_answers_history"],
