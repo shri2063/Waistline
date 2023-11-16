@@ -10,4 +10,4 @@ tiktoken
 roboflow
 ultralytics
 scikit-learn
-
+scikit_image
