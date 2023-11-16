@@ -9,7 +9,6 @@ from streamlit_chat import message
 import os
 st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
-import cv2
 from rf_sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
 from roboflow_inference import model_img_prediction, Box, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, model_json_prediction_for_sizing_issue
@@ -138,11 +137,11 @@ if img_file:
             image_files = [f for f in os.listdir(directory)]
             for image_file in image_files:
                 print(image_file)
-                img = Image.open(os.path.join(directory, image_file))
-                raw_image = np.asarray(img).astype('uint8')
-                bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
-                cv2.imwrite('sizing_img.jpg', bgr_image)
-                predictions = model_json_prediction_for_sizing_issue("sizing_img.jpg")
+                #img = Image.open(os.path.join(directory, image_file))
+                #raw_image = np.asarray(img).astype('uint8')
+                #bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
+                #cv2.imwrite('sizing_img.jpg', bgr_image)
+                predictions = model_json_prediction_for_sizing_issue(os.path.join(directory, image_file))
                 predictions = get_corner_coordinates_for_tshirt(predictions)
                 corrected_predictions = correct_class_for_sleeves(predictions)
                 # print("Corrected Predictions")
