@@ -34,7 +34,7 @@ img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], 
 img_folder = st.sidebar.file_uploader(label = "Upload image collection for sizing", type = "zip", key = "zipfile")
 model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
 defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
-selected_folder = st.sidebar.selectbox("Select a folder: ", ["green_tshirt"])
+selected_folder = st.sidebar.selectbox("Select a folder: ", ["green_tshirt", "black_tshirt"])
 check_images = st.sidebar.button(label = "Check Images")
 download_images = st.sidebar.button(label = "Download Images")
 
