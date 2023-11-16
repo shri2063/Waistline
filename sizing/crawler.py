@@ -21,8 +21,8 @@ def build_t_shirt_key_points(predictions):
         t_shirt_contour.append((point.x, point.y))
     t_shirt_contour = np.array(t_shirt_contour)
     t_shirt_contour_json = json.dumps(t_shirt_contour.tolist())
-    with open("t_shirt_contour.json", "w+") as json_file:
-        json.dump(t_shirt_contour_json, json_file, indent=2)
+    #with open("sizing/t_shirt_contour.json", "w+") as json_file:
+        #json.dump(t_shirt_contour_json, json_file, indent=2)
 
     left_sleeve_contour = []
     left_sleeve_class = [x for x in predictions if x.class_ == "left_sleeve_verified"][0]
@@ -30,8 +30,8 @@ def build_t_shirt_key_points(predictions):
         left_sleeve_contour.append((point.x, point.y))
     left_sleeve_contour = np.array(left_sleeve_contour)
     left_sleeve_contour = json.dumps(left_sleeve_contour.tolist())
-    with open("left_sleeve_contour.json", "w+") as json_file:
-        json.dump(left_sleeve_contour, json_file, indent=2)
+    #with open("sizing/left_sleeve_contour.json", "w+") as json_file:
+        #json.dump(left_sleeve_contour, json_file, indent=2)
 
     mobile_contour = []
     p_x = 0
@@ -41,7 +41,7 @@ def build_t_shirt_key_points(predictions):
         for point in mobile_class.points:
             mobile_contour.append((point.x, point.y))
         mobile_contour = np.array(mobile_contour)
-        print("mobile")
+        #print("mobile")
         x_coordinates = mobile_contour[:,0]
         y_coordinates = mobile_contour[:, 1]
         # Find min and max values along each axis
@@ -50,7 +50,7 @@ def build_t_shirt_key_points(predictions):
         x_avg = (min_x + max_x)/2
         y_avg = (min_y + max_y) / 2
         indices = np.where(y_coordinates < y_avg)
-        print("indices", indices)
+        #print("indices", indices)
         filtered_top_coordinates = x_coordinates[indices]
         top_min_x, top_max_x = np.min(filtered_top_coordinates), np.max(filtered_top_coordinates)
         indices = np.where(y_coordinates > y_avg)
@@ -102,7 +102,7 @@ def build_t_shirt_key_points(predictions):
     y_neck = t_shirt_class.corner_coordinate.top_coordinate[1]
     plt.scatter(int(t_shirt_class.corner_coordinate.top_coordinate[0]), int(t_shirt_class.corner_coordinate.top_coordinate[1]), c='black',
                marker='o', s=100, label='Changed Point')
-    plt.savefig('sleeves_1.png')
+    plt.savefig('sizing\scatter_plot.png')
 
     tshirt_length = (average_y_waist - y_neck)/1
     print("tshirt length: " + str(tshirt_length))

@@ -51,7 +51,7 @@ def RIGHT_WAIST_CORNER_PT(predictions, t_shirt_builder, mIndex):
                         t_shirt_builder.RIGHT_WAIST_CORNER_PT = t_shirt_builder.RIGHT_WAIST_CORNER_PT._replace(
                                     coordinates=(int(t_shirt_contour[fIndex%(len(t_shirt_contour)-1)][0]), int(t_shirt_contour[fIndex%(len(t_shirt_contour)-1)][1])),
                                     border_contour_index=fIndex)
-                        plt.savefig('sleeves_1.png')
+                        plt.savefig('sizing\scatter_plot.png')
 
                         break_both_loops = True
                         break

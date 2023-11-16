@@ -123,8 +123,8 @@ def correct_class_for_sleeves(predictions):
         prediction.corner_coordinate = sleeve_coordinates
         width = (sleeve_coordinates.bottom_coordinate[1] - sleeve_coordinates.top_coordinate[1])
         height = (sleeve_coordinates.right_coordinate[0] - sleeve_coordinates.left_coordinate[0])
-        print("Heyaaa")
-        print(width/height)
+        #print("Heyaaa")
+        #print(width/height)
         #if width/height < 1.5 and width/height > 0.7:
          #   continue
         #else:

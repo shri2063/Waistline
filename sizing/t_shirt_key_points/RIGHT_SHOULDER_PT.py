@@ -40,4 +40,4 @@ def RIGHT_SHOULDER_PT(predictions, t_shirt_builder,mIndex):
         if break_both_loops:
             break
 
-    plt.savefig('sleeves_1.png')
+    plt.savefig('sizing\scatter_plot.png')

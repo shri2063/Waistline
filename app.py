@@ -59,7 +59,7 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 if img_folder:
-    with open("temp.zip", "wb") as f:
+    with open("predict/tmp.zip", "wb") as f:
         f.write(img_folder.read())
     # Extract all contents of zip folder to a temporary folder
     with  ZipFile("temp.zip", "r") as zip_ref:

@@ -43,4 +43,4 @@ def LEFT_CHEST_CORNER_PT(predictions, t_shirt_builder):
 
     # Add labels and a title
 
-    plt.savefig('sleeves_1.png')
+    plt.savefig('sizing\scatter_plot.png')
