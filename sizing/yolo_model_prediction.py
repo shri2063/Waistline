@@ -34,9 +34,9 @@ class ImageData(BaseModel):
     #project = rf.workspace("tushar-x68o7").project("t-shirt-ix6cg")
     #return project.version(1).model
 
-def get_prediction_using_YOLO():
-    model = YOLO("best.pt")
-    results = model.predict(source = "sizing_img.jpg", conf = 0.25)
+def get_prediction_using_YOLO(filename: str):
+    model = YOLO("trained_models/best.pt")
+    results = model.predict(source = filename, conf = 0.25)
     masks = results[0].masks.cpu()
     #print(masks.data)
     for mask in masks.data:
@@ -89,7 +89,7 @@ def model_json_prediction_for_sizing_issue(filename: str) -> any:
         # model_prediction = json.load(file)
 
     #predictions_data = PredictionsData.parse_obj(model_prediction)
-    predictions_data = get_prediction_using_YOLO()
+    predictions_data = get_prediction_using_YOLO(filename)
     predictions = predictions_data.predictions
     csv_file_path = "points.csv"
     x = []

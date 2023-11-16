@@ -9,6 +9,7 @@ from streamlit_chat import message
 import os
 
 from models.box import Box
+from sizing.crawler import build_t_shirt_key_points
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -26,7 +27,7 @@ if "user_prompt_history" not in st.session_state:
 if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
-    st.session_state.issue = 'quality'
+    st.session_state.issue = 'sizing'
 # Upload an image and set some options for demo purposes
 
 img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
@@ -157,6 +158,7 @@ if img_file:
             print(f"chest: " + str(sum(CHEST) / len(CHEST)))
             print(f"shoulder: " + str(sum(SHOULDER) / len(SHOULDER)))
             print(f"tshirt: " + str(sum(TSHIRT) / len(TSHIRT)))
+            st.write('chest: ' + str(sum(CHEST) / len(CHEST)) + 'shoulder: ' +  str(sum(SHOULDER) / len(SHOULDER)) + "tshirt: " + str(sum(TSHIRT) / len(TSHIRT)))
 
         if st.session_state.issue == "quality":
             print("Session State: " + str(st.session_state))
