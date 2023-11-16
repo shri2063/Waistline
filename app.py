@@ -26,7 +26,7 @@ if "user_prompt_history" not in st.session_state:
 if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
-    st.session_state.issue = 'sizing'
+    st.session_state.issue = 'quality'
 # Upload an image and set some options for demo purposes
 
 img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")

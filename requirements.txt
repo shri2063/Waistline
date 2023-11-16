@@ -1,6 +1,5 @@
 numpy==1.23.5
 Pillow~=9.2.0
-opencv-python-headless
 streamlit
 streamlit-cropper
 streamlit-chat
