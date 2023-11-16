@@ -7,12 +7,14 @@ from PIL import Image, ImageOps
 from llm_response import run_llm
 from streamlit_chat import message
 import os
+
+from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue, Box
+
 st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
 from rf_sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
-from roboflow_inference import model_img_prediction,  generate_response_based_upon_result, \
-    get_iou_input_and_iou_predicted, model_json_prediction_for_sizing_issue
-
+from roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
+    get_iou_input_and_iou_predicted, yolo_chirag
 
 st.header("Waist Lyne Functioning Tour")
 # st.session_state.widget = ''
@@ -161,7 +163,7 @@ if img_file:
             st.session_state["chat_answers_history"] = []
             st.write('We are working on your query. Please wait.')
 
-            raw_image = np.asarray(img).astype('uint8')
+            #raw_image = np.asarray(img).astype('uint8')
             left, top, width, height = tuple(map(int, rect.values()))
             input_box = Box(
                 x=left,
@@ -169,10 +171,9 @@ if img_file:
                 width=width,
                 height=height
             )
-            scaled_cropped_img = get_scaled_cropped_img(raw_image, top, left, height, width, scale_input)
-            bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
-            cv2.imwrite('scaled_cropped_img.jpg', bgr_image)
-            model = yolo_tushar()
+            bgr_image = img.convert("RGB")
+            bgr_image.save("scaled_cropped_img.jpg")
+            model = yolo_chirag()
             iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
             result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
             message(generated_response, key=i.__str__())
@@ -190,9 +191,8 @@ if img_file:
             width=width,
             height=height
         )
-        scaled_cropped_img = get_scaled_cropped_img(raw_image, top, left, height, width, scale_input)
-        bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
-        cv2.imwrite('scaled_cropped_img.jpg', bgr_image)
+        bgr_image = img.convert("RGB")
+        bgr_image.save("scaled_cropped_img.jpg")
         model = yolo_chirag()
         iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
         result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
@@ -202,7 +202,7 @@ if img_file:
 
 if st.button('Check result'):
     if model == "blue":
-        model = yolo_tushar()
+        model = yolo_chirag()
     else:
         model = yolo_chirag()
 

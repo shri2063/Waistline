@@ -15,11 +15,11 @@ import numpy as np
 from rf_sizing_pre_processing import get_gradient_quadrant_for_contour
 
 
-#def yolo_chirag():
-    # rf = Roboflow(api_key="jPnk3SftEgcEmCcfhN0F")
-    #project = rf.workspace("chirag-s3e7s").project("tshirt-evfwv")
-    #return project.version(4).model
-    #print("changing to Tushar")
+def yolo_chirag():
+    rf = Roboflow(api_key="jPnk3SftEgcEmCcfhN0F")
+    project = rf.workspace("chirag-s3e7s").project("tshirt-evfwv")
+    return project.version(4).model
+
 
 
 
