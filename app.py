@@ -8,7 +8,8 @@ from llm_response import run_llm
 from streamlit_chat import message
 import os
 
-from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue, Box
+from models.box import Box
+from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
