@@ -39,8 +39,9 @@ def model_img_prediction(model, filename: str) -> str:
 
 def model_json_prediction(model, filename: str) -> list[Box]:
     model_prediction = model.predict(filename, confidence=4, overlap=30).json()
-    #print(model_prediction)
+    print(model_prediction)
 
+    #predictions_data = PredictionsData(predictions=[])
     # Parse and validate the JSON data
     predictions_data = PredictionsData.parse_obj(model_prediction)
 

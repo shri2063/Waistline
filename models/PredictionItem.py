@@ -17,7 +17,7 @@ class PredictionItem(BaseModel):
     confidence: float
     class_: str = 'bla'  # 'class' is a reserved keyword, so we use 'class_' instead
     class_id: int
-    points: list[Coordinate]
+    points: list[Coordinate] = None
     corner_coordinate: CornerCoordinate = None
 class PredictionsData(BaseModel):
     predictions: list[PredictionItem]
