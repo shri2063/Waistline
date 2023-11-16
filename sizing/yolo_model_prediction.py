@@ -70,7 +70,7 @@ def get_prediction_using_YOLO(filename: str):
 
 
 def model_json_prediction_for_sizing_issue(filename: str) -> any:
-    # model_prediction = model.images(filename, confidence=20).json()
+    # model_prediction = model.green_tshirt(filename, confidence=20).json()
     # print(model_prediction)
     # file_path = "D:\Desktop\ice-breaker\intro-to-vector\data.txt"
     # with open(file_path, "w") as file:

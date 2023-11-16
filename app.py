@@ -34,7 +34,7 @@ img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], 
 img_folder = st.sidebar.file_uploader(label = "Upload image collection for sizing", type = "zip", key = "zipfile")
 model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
 defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
-selected_folder = st.sidebar.selectbox("Select a folder: ", ["images"])
+selected_folder = st.sidebar.selectbox("Select a folder: ", ["green_tshirt"])
 check_images = st.sidebar.button(label = "Check Images")
 download_images = st.sidebar.button(label = "Download Images")
 
@@ -70,7 +70,7 @@ if img_folder:
 
 IMAGE_CHECKED = False
 if check_images:
-    # Display the list of images in the uploaded folder
+    # Display the list of green_tshirt in the uploaded folder
     print(selected_folder)
     directory = "samples/" + selected_folder
     image_files = [f for f in os.listdir(directory )]
@@ -79,7 +79,7 @@ if check_images:
         image = Image.open(image_path)
         st.image(image, use_column_width=True)
     IMAGE_CHECKED = True
-    #st.write("List of images in  the uploaded folder:")
+    #st.write("List of green_tshirt in  the uploaded folder:")
     #print(image_files)
     #st.write(image_files[0])
 
@@ -139,7 +139,7 @@ if img_file:
         st.session_state.issue = defect
         print("Session State: " + str(st.session_state))
         if st.session_state.issue == "sizing":
-            directory = "predict/images"
+            directory = "predict/green_tshirt"
             image_files = [f for f in os.listdir(directory)]
             for image_file in image_files:
                 print(image_file)

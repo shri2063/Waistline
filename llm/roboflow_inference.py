@@ -18,13 +18,13 @@ def yolo_chirag():
 
 
 # infer on a local image
-# print(model.images("your_image.jpg", confidence=40, overlap=30).json())
+# print(model.green_tshirt("your_image.jpg", confidence=40, overlap=30).json())
 
 # visualize your prediction
-# model.images("your_image.jpg", confidence=40, overlap=30).save("prediction.jpg")
+# model.green_tshirt("your_image.jpg", confidence=40, overlap=30).save("prediction.jpg")
 
 # infer on an image hosted elsewhere
-# print(model.images("URL_OF_YOUR_IMAGE", hosted=True, confidence=40, overlap=30).json())
+# print(model.green_tshirt("URL_OF_YOUR_IMAGE", hosted=True, confidence=40, overlap=30).json())
 
 
 def model_img_prediction(model, filename: str) -> str:
