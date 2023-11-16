@@ -28,8 +28,8 @@ def yolo_chirag():
 
 
 def model_img_prediction(model, filename: str) -> str:
-    model.predict(filename, confidence=4, overlap=30).save("prediction.jpg")
-    return "prediction.jpg"
+    model.predict(filename, confidence=4, overlap=30).save("quality/predict.jpg")
+    return "quality/predict.jpg"
 
 
 
@@ -100,7 +100,7 @@ def generate_response_based_upon_result(iou_input: float, iou_predicted: float) 
 def get_iou_input_and_iou_predicted(model, input_box) :
     f_iou_input = 0.0
     f_iou_predicted = 0.0
-    box_objects: list[Box] = model_json_prediction(model, 'scaled_cropped_img.jpg')
+    box_objects: list[Box] = model_json_prediction(model, "quality/quality_img.jpg")
     for predicted_box in box_objects:
         print(
             f"predicted box x: {predicted_box.x}, y: {predicted_box.y}, width: {predicted_box.width}, height: {predicted_box.height}")

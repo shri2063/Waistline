@@ -4,7 +4,7 @@ import streamlit as st
 import numpy as np
 from streamlit_cropper import st_cropper
 from PIL import Image, ImageOps
-from llm_response import run_llm
+from llm.llm_response import run_llm
 from streamlit_chat import message
 import os
 
@@ -14,8 +14,8 @@ from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
-from rf_sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
-from roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
+from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
+from llm.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
 st.header("Waist Lyne Functioning Tour")
@@ -27,12 +27,13 @@ if "user_prompt_history" not in st.session_state:
 if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
-    st.session_state.issue = 'sizing'
+    st.session_state.issue = 'quality'
 # Upload an image and set some options for demo purposes
 
 img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
 img_folder = st.sidebar.file_uploader(label = "Upload image collection for sizing", type = "zip", key = "zipfile")
-model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key=4)
+model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
+defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
 selected_folder = st.sidebar.selectbox("Select a folder: ", ["images"])
 check_images = st.sidebar.button(label = "Check Images")
 download_images = st.sidebar.button(label = "Download Images")
@@ -135,6 +136,7 @@ if img_file:
     TSHIRT = []
 
     if st.button('Submit'):
+        st.session_state.issue = defect
         print("Session State: " + str(st.session_state))
         if st.session_state.issue == "sizing":
             directory = "predict/images"
@@ -175,7 +177,7 @@ if img_file:
                 height=height
             )
             bgr_image = img.convert("RGB")
-            bgr_image.save("scaled_cropped_img.jpg")
+            bgr_image.save("quality/quality_img.jpg")
             model = yolo_chirag()
             iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
             result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
@@ -195,7 +197,7 @@ if img_file:
             height=height
         )
         bgr_image = img.convert("RGB")
-        bgr_image.save("scaled_cropped_img.jpg")
+        bgr_image.save("quality/quality_img.jpg")
         model = yolo_chirag()
         iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
         result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
@@ -210,7 +212,7 @@ if st.button('Check result'):
         model = yolo_chirag()
 
     st.write('We are working on your query. Please wait.')
-    predicted_image_file = model_img_prediction(model, 'scaled_cropped_img.jpg')
+    predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
     predicted_image = Image.open(predicted_image_file)
     predicted_image = np.asarray(predicted_image).astype('uint8')
     st.image(Image.fromarray(predicted_image), caption='Predicted Image')
