@@ -122,13 +122,7 @@ examples = [
     },
     {
         "query": "the tshirt  length is 41 cm while I expected it to 39 sm",
-        "answer": "May I know the size of tshirt."
-    },
-    {
-        "query": "The size of tshirt is L size ",
-        "answer":  "Thanks . Please let me know If I have understood your concern correctly. "
-                    "The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Noting down the query:"
-                    "Issue:Sizing:Size:L: tshirt length is more than expected"
+        "answer": "Thanks . Please let me know If I have understood your concern correctly. The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Issue:Sizing:tshirt length is more than expected"
     },
     {
         "query": "I think you more or less got the point",
@@ -136,19 +130,13 @@ examples = [
     },
     {
         "query": "In the tshirt I bought one sleeve is longer than another",
-        "answer":  "May I know the size of tshirt"
-    },
-
-    {
-        "query": "The size of tshirt is S size ",
-        "answer":  "Thanks . Please let me know If I have understood your concern correctly. "
-                    "The tshirt you bought has sizing issue because length of both sleeves is different. Noting down the query:"
+        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. "
+                  "Noting down the query:"
                     "Issue:Sizing:Size:M: mismatch in length of sleeves"
     },
     {
-        "query": "In the tshirt I bought it feels tighter in the neck area. Tshirt size is L",
-        "answer": "I understand you are finding that neck opening of tshirt is short."
-                  "Please let me know If I have understood your concern correctly. Issue: Sizing: Size:L:short neck opening"
+        "query": "In the tshirt I bought it feels tighter in the neck area. ",
+        "answer": "I understand you are finding that neck opening of tshirt is short. Issue: Sizing:short neck opening"
     },
 
 
@@ -172,7 +160,7 @@ example_prompt = PromptTemplate(
 prefix = """The following are exerpts from conversations with an AI assistant.  Company name is Waistlyne and your name is Rachel. This platform is basically MVP concept, showcasing how AI can assist buyers
  in addressing sizing or quality concerns, mirroring the  support provided by a customer associate. At present, AI is equipped to recognize defects exclusively 
  in T-shirts.Whenever the issue deals with length or size smaller/larger it comes into Sizing issue and when there is a hole or stain  or any poor quality it comes into Quality issue. You need to identify wehter it is sizing issue or Quality issue.
-  . Please note if it is a Sizing issue then compulsorily ask user for tshirt size like L,M etc . User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the e-commerce company who is
+  . User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the e-commerce company who is
 trying to identify exact issue face by the problem .Once you have identified the issue do not end the conversation until you note down the query:Issue.... and ensure that you  receive acknowledgement from  the user that query is correct. Also, note this is an experimental setup, so if user does not have a tshirt, guide him
  to download one from catalogue present in the left sidebar. .  Here are some examples just for reference """
 # and the suffix our user input and output indicator
