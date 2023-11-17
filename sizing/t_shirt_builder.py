@@ -19,6 +19,7 @@ class TShirtBuilder:
         self.RIGHT_CHEST_CORNER_PT = CornerPoint(None, None)
         self.LEFT_SHOULDER_PT = CornerPoint(None, None)
         self.RIGHT_SHOULDER_PT = CornerPoint(None, None)
+        self.LEFT_COLLAR_PT = CornerPoint(None, None)
 
         self.body_length = Decimal()
         self.chest_length = Decimal()

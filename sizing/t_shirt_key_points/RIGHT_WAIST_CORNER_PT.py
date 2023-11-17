@@ -39,7 +39,10 @@ def RIGHT_WAIST_CORNER_PT(predictions, t_shirt_builder, mIndex):
                     /t_shirt_contour[fIndex%(len(t_shirt_contour)-1)][0] > 0.01):
 
                 while True:
-                    if t_shirt_contour[(fIndex + 1)%(len(t_shirt_contour)-1)][1] > t_shirt_contour[fIndex%(len(t_shirt_contour)-1)][1]:
+                    current_pt_y = t_shirt_contour[fIndex%(len(t_shirt_contour)-1)][1]
+                    next_pt_y = t_shirt_contour[(fIndex + 1) % (len(t_shirt_contour) - 1)][1]
+                    next_2_pt_y = t_shirt_contour[(fIndex + 2) % (len(t_shirt_contour) - 1)][1]
+                    if next_pt_y > current_pt_y or (next_pt_y == current_pt_y and next_2_pt_y > current_pt_y):
                         fIndex = fIndex + 1
                     else:
 
