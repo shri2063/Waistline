@@ -1,6 +1,6 @@
 import os
 
-import openai
+import openai_llm
 
 from langchain import OpenAI
 
@@ -56,7 +56,7 @@ Question: {query}
 Answer: """
 
 openai_llm = OpenAI(
-    model_name="gpt-3.5-turbo",
+    model_name="text-davinci-003",
     openai_api_key=k
 )
 encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
@@ -232,8 +232,8 @@ def get_revised_prompt_template():
 
 
 def chatgpt_call(prompt, model="gpt-3.5-turbo"):
-    openai.api_key = k
-    response = openai.ChatCompletion.create(
+    openai_llm.api_key = k
+    response = openai_llm.ChatCompletion.create(
         model=model,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -241,8 +241,8 @@ def chatgpt_call(prompt, model="gpt-3.5-turbo"):
 
 
 def chatgpt_call_with_memory(query, model="gpt-3.5-turbo"):
-    openai.api_key = k
-    response = openai.ChatCompletion.create(
+    openai_llm.api_key = k
+    response = openai_llm.ChatCompletion.create(
         model=model,
         messages=messages
     )
