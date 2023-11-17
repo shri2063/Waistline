@@ -1,8 +1,3 @@
-import os
-
-import openai_llm
-
-from langchain import OpenAI
 
 k = "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"
 from langchain.llms import OpenAI
