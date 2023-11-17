@@ -1,6 +1,7 @@
 import os
 
 import openai
+
 from langchain import OpenAI
 
 k = "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"
@@ -10,6 +11,7 @@ from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationChain
 from langchain import PromptTemplate
 from langchain import FewShotPromptTemplate
+import  tiktoken
 
 
 # ------------------------------------- USING LANGCHAIN CONVERSATION CHAIN -----------------------------------------------
@@ -53,11 +55,13 @@ Question: {query}
 
 Answer: """
 
-openai = OpenAI(
-    model_name="text-davinci-003",
+openai_llm = OpenAI(
+    model_name="gpt-3.5-turbo",
     openai_api_key=k
 )
+encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 prompt_template = PromptTemplate(input_variables=["query"], template=template)
+
 # print(openai(prompt_template.format(query = "Which libraries and model providers offer LLMs?")))
 
 
@@ -89,46 +93,59 @@ examples = [
         "answer": "Hi.Thanks for reaching out how can I help you out today."
     },
     {
+        "query": "I just got a tshirt  from your site and it seems that it has two of the buttons in the top missing",
+        "answer": "I understand you are finding missing buttons from tshirt you bought from our site . However, currently I can help in assisting queries only related to sizing and quality . I am really sorry and hopefully soon I can "
+                  "help in solving problem related to missing items too "
+    },
+    {
+        "query": "Tshirt I bought from your site showed different colour on the website and the one I bought has different colour",
+        "answer": "I understand you are finding colour in the tshirt not as per your expectation . However, currently I can help in assisting queries only related to sizing and quality . I am really sorry and hopefully soon I can "
+                  "help in solving problem related to colour mismatch items too "
+    },
+    {
         "query": "There is a problem in the tshirt I bought from your e-commerce site",
         "answer": "I understand you are facing problem in the t-shirt you bought from our site. Can you explain more about the problem you are facing. Is it defect like stain or hole or missing buttons "
     },
     {
 
         "query": "the tshirt has a hole of a size of coin near the sleeve",
-        "answer": "Thanks . Please let me know If I have understood your concern correctly. The t-shirt you bought has quality issue because it has a hole inside it. Noting down the query  : Quality Issue - hole"
+        "answer": "Thanks . Please let me know If I have understood your concern correctly. The t-shirt you bought has quality issue because it has a hole inside it. Noting down the query:Issue:Quality:hole"
     },
 
     {
         "query": "Well. I am not sure if you understood correctly, but yes we can proceed with this understanding",
-        "answer":"Great! Can you please upload image of your tshirt  and select the area in your tshirt where the hole is present"
+        "answer":"Great!  Noting down the query:Issue:Quality:hole. Can you please upload image of your tshirt  and select the area in your tshirt where the hole is present"
     },
     {
 
         "query": "The white coloured dress is not good",
-        "answer": "I understand you are finding  white coloured dress you bought from our site not good. Still I would like what is precise problem. Is it defect like stain or quality of garment is thin or the dress appears dull "
+        "answer": "I understand you are finding  white coloured dress you bought from our site not good. However, currently I can help in assisting queries only related to tshirts. I am really sorry and hopefully soon I can "
+                  "help in solving problem related to dress too "
     },
     {
-        "query": "The pant is just bad",
-        "answer": "I understand you are finding the pant bad. Still I would like what is precise problem. Is it that pant has missing components or  quality of garment is thin or the pant dimensions are not correct"
+        "query": "The tshirt  is just bad",
+        "answer": "I understand you are finding the tshirt  bad. Still I would like what is precise problem. Is it that pant has missing components or  quality of garment is thin or the tshirt dimensions are not correct"
     },
     {
-        "query": "the pant length is 41 cm while I expected it to 39 sm",
-        "answer": "Thanks . Please let me know If I have understood your concern correctly. The pant you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Noting down the query: Sizing Issue - oversize"
+        "query": "the tshirt  length is 41 cm while I expected it to 39 sm",
+        "answer": "Thanks . Please let me know If I have understood your concern correctly. The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Noting down the query:Issue:Sizing: tshirt length is incorrect"
     },
     {
         "query": "I think you more or less got the point",
-        "answer": "Great! Can you please upload image of your pant where the length of pant is clearly visible"
+        "answer": "Great! Noting down the query:Issue:Sizing:oversize . Can you please upload image of your tshirt where the length of tshirt is clearly visible"
     },
     {
-        "query": "I just got a jacket from your site and it seems that it has two of the buttons in the top missing",
-        "answer": "Thanks .  Please let me know If I have understood your concern correctly. The jacket you bought have missing parts issue because some of the buttons are missing. Noting down the query: Missing Issue - buttons"
+        "query": "In the tshirt I bought one sleeve is longer than another",
+        "answer": "I understand you are finding  in the tshirt one sleeve longer than another.However, currently I am not able to measure sleeve length. I can only measure shoulders, chest and tshirt length I am really sorry"
     },
     {
-        "query": "You have understood the query correctly",
-        "answer": "Great! Can you please upload image of your jacket and select the area in your tshirt where the buttons are missing"
-    }
+        "query": "In the tshirt I bought it feels tighter in the neck area",
+        "answer": "I understand you are finding  in the tshirt one sleeve longer than another.However, currently I am not able to measure sleeve length. I can only measure shoulders, chest and tshirt length I am really sorry"
+    },
+
 
 ]
+
 
 # create a example template
 example_template = """
@@ -144,11 +161,12 @@ example_prompt = PromptTemplate(
 
 # now break our previous prompt into a prefix and suffix
 # the prefix is our instructions
-prefix = """The following are exerpts from conversations with an AI
-assistant. User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the e-commerce company who is
-trying to identify exact issue face by the problem and would end the conversation once it finds exact issue . Here are some
-examples: 
-"""
+prefix = """The following are exerpts from conversations with an AI assistant.  Company name is Waistlyne and your name is Rachel. This platform is basically MVP concept, showcasing how AI can assist buyers
+ in addressing sizing or quality concerns, mirroring the  support provided by a customer associate. At present, AI is equipped to recognize defects exclusively 
+ in T-shirts.Whenever the issue deals with length or size smaller/larger it comes into Sizing issue and when there is a hole or stain  or any poor quality it comes into Quality issue. You need to identify wehter it is sizing issue or Quality issue.
+  . Also note is sizing we are currently not able to measure neck and sleeve length. User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the e-commerce company who is
+trying to identify exact issue face by the problem .Once you have identified the issue do not end the conversation until you note down the query:Issue.... and  direct the user to upload image of the tshirt and receiving acknowledgementof the user. Also, note this is an experimental setup, so if user does not have a tshirt, guide him
+ to download one from catalogue present in the left sidebar. .  Here are some examples just for reference """
 # and the suffix our user input and output indicator
 suffix = """
 User: {query}
@@ -156,13 +174,31 @@ AI: """
 
 
 # now create the few shot prompt template
+ai_introduction = "Greetings, I'm Rachel, and I'm delighted to welcome you to Waist Lyne. This serves as our MVP concept, showcasing how AI can assist " \
+                  "buyers in addressing sizing or quality concerns, mirroring the support provided by a customer associate. At present, I'm equipped to " \
+                  "recognize defects exclusively in T-shirts. Feel free to upload an image of a " \
+                  "T-shirt with any defects or incorrect sizing, or alternatively, you can choose to download one from our catalog of T-shirt images. "
 
+messages = [
+    {'role': 'system', 'content': 'The following are exerpts from conversations with an AI assistant.  Company name is Waistlyne and your name is Rachel. This platform is basically MVP concept, showcasing how AI can assist buyers in addressing sizing or quality concerns, mirroring the  support provided by a customer associate. At present, '
+                                  'AI is equipped to recognize defects exclusively in T-shirts. User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the '
+                                  'e-commerce company who istrying to identify exact issue face by the problem'}]
 
 def run_llm(query):
+    result_string = prefix + ""
+    for example in examples:
+        result_string += f"Query: {example['query']}\nAnswer: {example['answer']}\n\n"
 
-    answer = openai(get_revised_prompt_template().format(query=query))
+
+    list = encoding.encode(result_string)
+    print(len(list))
+    answer = openai_llm(get_revised_prompt_template().format(query=query))
     new_query = {"query": query, "answer": answer}
     examples.append(new_query)
+    #print(examples)
+    messages.append({'role': 'user', 'content': f"{query}"})
+    messages.append({'role': 'assistant',
+                     'content': f"{answer}"})
 
     return answer
 
@@ -182,6 +218,7 @@ def get_revised_prompt_template():
 
 
 def chatgpt_call(prompt, model="gpt-3.5-turbo"):
+    openai.api_key = k
     response = openai.ChatCompletion.create(
         model=model,
         messages=[{"role": "user", "content": prompt}]
@@ -189,7 +226,8 @@ def chatgpt_call(prompt, model="gpt-3.5-turbo"):
     return response.choices[0].message["content"]
 
 
-def chatgpt_call_with_memory(messages, model="gpt-3.5-turbo"):
+def chatgpt_call_with_memory(query, model="gpt-3.5-turbo"):
+    openai.api_key = k
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages
@@ -197,8 +235,6 @@ def chatgpt_call_with_memory(messages, model="gpt-3.5-turbo"):
     return response.choices[0].message["content"]
 
 
-messages = [
-    {'role': 'system', 'content': 'You are friendly chatbot.'}]
 
 
 def chatgpt_conversation(prompt):

@@ -4,7 +4,7 @@ import streamlit as st
 import numpy as np
 from streamlit_cropper import st_cropper
 from PIL import Image, ImageOps
-from llm.llm_response import run_llm
+from llm.llm_response import run_llm, ai_introduction, messages, chatgpt_call_with_memory
 from streamlit_chat import message
 import os
 
@@ -18,7 +18,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from llm.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("Waist Lyne Functioning Tour")
+st.header("WaistLyne")
 # st.session_state.widget = ''
 i = 45
 
@@ -37,6 +37,7 @@ defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], 
 selected_folder = st.sidebar.selectbox("Select a folder: ", ["clean_tshirts", "black_tshirt", "green_tshirt"])
 check_images = st.sidebar.button(label = "Check Images")
 download_images = st.sidebar.button(label = "Download Images")
+message(ai_introduction, key=i.__str__())
 
 def submit(elseif=None):
     with st.spinner("Generating response...."):
@@ -207,6 +208,14 @@ if img_file:
         if result == True:
             generated_response = "Apologies for my earlier reply. " + generated_response
         message(generated_response, key=i.__str__())
+
+if st.button('Summarize'):
+    messages.append({'role': 'user', 'content': 'Please summarize the discussion till now in format and structure ,so I can directly pass it as a prefix for my next prompt with no other context required  '})
+    response = chatgpt_call_with_memory(messages)
+    st.write(response)
+
+
+
 
 if st.button('Check result'):
     if model == "blue":
