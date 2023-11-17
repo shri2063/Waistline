@@ -122,13 +122,13 @@ examples = [
     },
     {
         "query": "the tshirt  length is 41 cm while I expected it to 39 sm",
-        "answer": "Thanks . Please let me know If I have understood your concern correctly. The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Also may I know the size of tshirt."
+        "answer": "May I know the size of tshirt."
     },
     {
         "query": "The size of tshirt is L size ",
         "answer":  "Thanks . Please let me know If I have understood your concern correctly. "
                     "The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Noting down the query:"
-                    "Issue:Sizing:Size:M: tshirt length is more than expected"
+                    "Issue:Sizing:Size:L: tshirt length is more than expected"
     },
     {
         "query": "I think you more or less got the point",
@@ -136,8 +136,7 @@ examples = [
     },
     {
         "query": "In the tshirt I bought one sleeve is longer than another",
-        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. "
-                  "May I know the size of tshirt"
+        "answer":  "May I know the size of tshirt"
     },
 
     {
