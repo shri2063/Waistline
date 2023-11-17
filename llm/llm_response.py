@@ -57,7 +57,7 @@ Answer: """
 
 openai_llm = OpenAI(
     model_name="gpt-3.5-turbo",
-    OPENAI_API_KEY=k
+    openai_api_key=k
 )
 encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 prompt_template = PromptTemplate(input_variables=["query"], template=template)
