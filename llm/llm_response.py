@@ -130,13 +130,13 @@ examples = [
     },
     {
         "query": "In the tshirt I bought one sleeve is longer than another",
-        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. "
+        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. Please let me know If I have understood your concern correctly."
                   "Noting down the query:"
                     "Issue:Sizing:Size:M: mismatch in length of sleeves"
     },
     {
         "query": "In the tshirt I bought it feels tighter in the neck area. ",
-        "answer": "I understand you are finding that neck opening of tshirt is short. Issue: Sizing:short neck opening"
+        "answer": "I understand you are finding that neck opening of tshirt is short. Please let me know If I have understood your concern correctly. Issue: Sizing:short neck opening"
     },
 
 
