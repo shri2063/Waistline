@@ -29,7 +29,7 @@ if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
     st.session_state.issue = 'quality'
-GENERATED_ISSUE = []
+GENERATED_ISSUE: str = ''
 # Upload an image and set some options for demo purposes
 
 img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
@@ -46,6 +46,7 @@ def submit(elseif=None):
         print("Session State " + str(st.session_state))
         cust_query = st.session_state.widget
         generated_response = run_llm(query=cust_query)
+        global  GENERATED_ISSUE
         GENERATED_ISSUE = generated_response
         print(generated_response)
         if "Sizing Issue" in str(generated_response):
