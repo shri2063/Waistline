@@ -7,6 +7,8 @@ multiple examples for each issue category. In your Answer just mention the Categ
 with "I don't know"
 
 Context: 
+Category 0 -  Involves neck or sleeves. Examples for this category: neck opening too tight, neck opening
+ too wide, sleeves are too short, sleeves are too long, length of both sleeves do not match
 Category 1- Chest size is smaller. Examples for this category: tshirt tight as chest, not fitting 
 near chest,size smaller for chest, cannot breathe because too tight.  
 Category 2- Chest size is larger. Examples for this category: tshirt loose at chest, loose fitting 
@@ -27,8 +29,7 @@ Category 9-  tshirt in general undersize. Examples for this category: tshirt siz
 ,size smaller for tshirt,tshirt underfitting.
 Category 10-  tshirt in general oversize. Examples for this category: tshirt size should be M but it is L, tshirt loose fitting 
 ,size larger for tshirt,tshirt overfitting..
-Category 11-  Involves neck or sleeves. Examples for this category: neck opening too tight, neck opening
- too wide, sleeves are too short, sleeves are too long, length of both sleeves do not match
+
  
 
 
