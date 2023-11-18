@@ -3,8 +3,7 @@ from langchain.llms import OpenAI
 from langchain import PromptTemplate
 template = """Answer the question based on the context below. You have to select correct Issue Category for 
 the User query provided in the Input query. In the context below you have been provided multiple Issue categories along with 
-multiple examples for each issue category. In your Answer just mention the issue name, for example - issue: Chest size is smaller
-or issue: tshirt in general oversize.Please note you have to select only from the given categories. Strictly do not improvise or innovate new  categories If the category  cannot be decided using the information provided answer
+multiple examples for each issue category. In your Answer just mention the Category name, for example - Category 1. Please note you have to select only from the given categories. Strictly do not improvise or innovate new  categories If the category  cannot be decided using the information provided answer
 with "I don't know"
 
 Context: 
@@ -29,7 +28,7 @@ Category 9-  tshirt in general undersize. Examples for this category: tshirt siz
 Category 10-  tshirt in general oversize. Examples for this category: tshirt size should be M but it is L, tshirt loose fitting 
 ,size larger for tshirt,tshirt overfitting..
 Category 11-  Involves neck or sleeves. Examples for this category: neck opening too tight, neck opening
- too wide, slleves are too short, sleeves are too long, length of both sleeves do not match
+ too wide, sleeves are too short, sleeves are too long, length of both sleeves do not match
  
 
 

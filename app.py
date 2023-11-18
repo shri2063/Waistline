@@ -47,7 +47,8 @@ def submit(elseif=None):
     with st.spinner("Generating response...."):
         print("Session State " + str(st.session_state))
         cust_query = st.session_state.widget
-        generated_response = run_llm(query=cust_query)
+        generated_response = run_llm(cust_query, fetch_conversation_till_now())
+
         global  GENERATED_ISSUE
         st.session_state.generated_issue = str(generated_response)
         print("Generated Issue", GENERATED_ISSUE)
@@ -223,7 +224,7 @@ if st.button('Summarize'):
 
 
     print(st.session_state.generated_issue)
-    split_result = str(st.session_state.generated_issue).split("Noting down the Issue")
+    split_result = str(st.session_state.generated_issue).split("Noting down")
     print(split_result)
     issue = ''
     # Check if there's a second part (index 1) after the split
@@ -257,3 +258,11 @@ if st.session_state["chat_answers_history"]:
         message(user_query, is_user=True, key=i.__str__())
         i = i + 1
         message(generated_response, key=i.__str__())
+
+def fetch_conversation_till_now():
+    conversation = []
+    for generated_response, user_query in zip(st.session_state["chat_answers_history"],
+                                              st.session_state["user_prompt_history"]):
+        new_query = {"query": user_query, "answer": generated_response}
+        conversation.append(new_query)
+        return conversation

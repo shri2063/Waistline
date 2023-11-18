@@ -186,17 +186,22 @@ messages = [
                                   'AI is equipped to recognize defects exclusively in T-shirts. User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the '
                                   'e-commerce company who istrying to identify exact issue face by the problem'}]
 
-def run_llm(query):
+def run_llm(query, conversation_list):
     result_string = prefix + ""
+    x = []
     for example in examples:
         result_string += f"Query: {example['query']}\nAnswer: {example['answer']}\n\n"
+        x.append(example)
+    if conversation_list is not  None:
+        for conversation in conversation_list:
+            result_string += f"Query: {conversation['query']}\nAnswer: {conversation['answer']}\n\n"
+            x.append(conversation)
 
 
     list = encoding.encode(result_string)
     print(len(list))
-    answer = openai_llm(get_revised_prompt_template().format(query=query))
-    new_query = {"query": query, "answer": answer}
-    examples.append(new_query)
+
+    answer = openai_llm(get_revised_prompt_template(x).format(query=query))
     #print(examples)
     messages.append({'role': 'user', 'content': f"{query}"})
     messages.append({'role': 'assistant',
@@ -205,9 +210,9 @@ def run_llm(query):
     return answer
 
 
-def get_revised_prompt_template():
+def get_revised_prompt_template(conversation):
     return FewShotPromptTemplate(
-        examples=examples,
+        examples=conversation,
         example_prompt=example_prompt,
         prefix=prefix,
         suffix=suffix,
