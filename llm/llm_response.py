@@ -106,38 +106,44 @@ examples = [
         "query": "There is a problem in the tshirt I bought from your e-commerce site",
         "answer": "I understand you are facing problem in the t-shirt you bought from our site. Can you explain more about the problem you are facing. Is it defect like stain or hole or missing buttons "
     },
+    {
+        "query": "the tshirt  length is incorrect",
+        "answer": "Thanks . I understand that you find tshirt length incoorect, but can you exaplain in detail if tshirt length is short or long"
+    },
+    {
+        "query": "the tshirt  length is 41 cm while I expected it to 39 sm",
+        "answer": "Thanks . Please let me know If I have understood your concern correctly. The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Noting down Issue:Sizing:tshirt length is more than expected"
+    },
 
     {
         "query": "The tshirt  is just bad",
         "answer": "I understand you are finding the tshirt  bad. Still I would like what is precise problem. Is it that pant has missing components or  quality of garment is thin or the tshirt dimensions are not correct"
     },
     {
-
-        "query": "the tshirt has a hole of a size of coin near the sleeve",
-        "answer": "Thanks . Please let me know If I have understood your concern correctly. The t-shirt you bought has quality issue because it has a hole inside it. Noting down the query:Issue:Quality:hole"
-    },
-    {
-        "query": "Well. I am not sure if you understood correctly, but yes we can proceed with this understanding",
-        "answer":"Great!  Give me a moment I will revert back"
-    },
-    {
-        "query": "the tshirt  length is 41 cm while I expected it to 39 sm",
-        "answer": "Thanks . Please let me know If I have understood your concern correctly. The tshirt you bought has sizing issue because its size is 41 cm when actual size should be 39 cm. Issue:Sizing:tshirt length is more than expected"
-    },
-    {
-        "query": "I think you more or less got the point",
-        "answer": "Great!  Give me a moment I will revert back"
-    },
-    {
-        "query": "In the tshirt I bought one sleeve is longer than another",
-        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. Please let me know If I have understood your concern correctly."
-                  "Noting down the query:"
-                    "Issue:Sizing:Size:M: mismatch in length of sleeves"
+        "query": "the tshirt  size is incorrect",
+        "answer": "Thanks . I understand that you find tshirt size incoorect, but can you exaplain in detail if tshirt size is smaller or larger than you expected"
     },
     {
         "query": "In the tshirt I bought it feels tighter in the neck area. ",
-        "answer": "I understand you are finding that neck opening of tshirt is short. Please let me know If I have understood your concern correctly. Issue: Sizing:short neck opening"
+        "answer": "I understand you are finding that neck opening of tshirt is short. Noting down the Issue: Sizing:short neck opening"
     },
+    {
+
+        "query": "the tshirt has a hole of a size of coin near the sleeve",
+        "answer": "Thanks . Please let me know If I have understood your concern correctly. The t-shirt you bought has quality issue because it has a hole inside it. Noting down the Issue:Quality:hole"
+    },
+    {
+
+        "query": "the tshirt has a yellow stain near the chest",
+        "answer": "Thanks . The t-shirt you bought has quality issue because it has a yell. Noting down the Issue:Quality:stain"
+    },
+
+    {
+        "query": "In the tshirt I bought one sleeve is longer than another",
+        "answer": "I understand you are finding  in the tshirt one sleeve longer than another. Please let me know If I have understood your concern correctly."
+                  "Noting down the Issue:Sizing: mismatch in length of sleeves"
+    },
+
 
 
 ]

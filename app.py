@@ -8,6 +8,7 @@ from streamlit_chat import message
 import os
 
 from llm.llm_response import ai_introduction, run_llm, chatgpt_call_with_memory, messages
+from llm.llm_sizing import find_sizing_category_for_issue
 from models.box import Box
 from sizing.crawler import build_t_shirt_key_points
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
@@ -15,7 +16,7 @@ from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
 from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
-from llm.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
+from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
 st.header("WaistLyne")
@@ -28,6 +29,7 @@ if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
     st.session_state.issue = 'quality'
+GENERATED_ISSUE = []
 # Upload an image and set some options for demo purposes
 
 img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
@@ -44,6 +46,7 @@ def submit(elseif=None):
         print("Session State " + str(st.session_state))
         cust_query = st.session_state.widget
         generated_response = run_llm(query=cust_query)
+        GENERATED_ISSUE = generated_response
         print(generated_response)
         if "Sizing Issue" in str(generated_response):
             st.session_state.issue = 'sizing'
@@ -137,8 +140,7 @@ if img_file:
     TSHIRT = []
 
     if st.button('Submit'):
-        st.session_state.issue = defect
-        print("Session State: " + str(st.session_state))
+
         if st.session_state.issue == "sizing":
             directory = "predict/images"
             image_files = [f for f in os.listdir(directory)]
@@ -210,8 +212,9 @@ if img_file:
         message(generated_response, key=i.__str__())
 
 if st.button('Summarize'):
-    messages.append({'role': 'user', 'content': 'Please summarize the discussion till now in format and structure ,so I can directly pass it as a prefix for my next prompt with no other context required  '})
-    response = chatgpt_call_with_memory(messages)
+    #messages.append({'role': 'user', 'content': 'Please summarize the discussion till now in format and structure ,so I can directly pass it as a prefix for my next prompt with no other context required  '})
+    #response = chatgpt_call_with_memory(messages)
+    response = find_sizing_category_for_issue(GENERATED_ISSUE)
     st.write(response)
 
 
