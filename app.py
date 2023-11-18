@@ -10,7 +10,7 @@ import os
 from llm.llm_response import ai_introduction, run_llm, chatgpt_call_with_memory, messages
 from llm.llm_sizing import generate_sizing_category_for_issue
 from models.box import Box
-from sizing.crawler import build_t_shirt_key_points
+from sizing.crawler import build_t_shirt_key_points, get_ratios_for_tshirt
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -50,16 +50,7 @@ download_images = st.sidebar.button(label="Download Images")
 message(ai_introduction, key=i.__str__())
 
 
-def submit(elseif=None):
-    with st.spinner("Generating response...."):
-        print("Session State " + str(st.session_state))
-        cust_query = st.session_state.widget
-        print(cust_query)
-        generated_response = run_llm(cust_query, fetch_conversation_till_now())
-        st.session_state["user_prompt_history"].append(cust_query)
-        processed_response = revise_user_state_based_upon_response(str(generated_response))
-        print(processed_response)
-        st.session_state["chat_answers_history"].append(processed_response)
+
 
 
 if st.session_state["chat_answers_history"]:
@@ -71,10 +62,37 @@ if st.session_state["chat_answers_history"]:
         message(generated_response, key=i.__str__())
 
 
-if st.session_state.issue != '' and st.session_state.image_uploaded == False:
+st.session_state.issue = 'sizing'
+if st.session_state.issue == 'sizing' and st.session_state.image_uploaded == False:
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
-    img_file = st.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
+    sizing_img = st.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
+    sizing_img = Image.open(sizing_img)
+    sizing_img.save('sizing/sizing_img.jpg')
+
+    if st.button('Submit Image'):
+        predictions = model_json_prediction_for_sizing_issue('sizing/sizing_img.jpg')
+        predictions = get_corner_coordinates_for_tshirt(predictions)
+        corrected_predictions = correct_class_for_sleeves(predictions)
+
+        try:
+            CbyS, CbyL,SbyL = get_ratios_for_tshirt(corrected_predictions)
+            st.write(CbyS, CbyL,SbyL)
+
+        except Exception as e:
+            print(e.__str__())
+
+
+def submit(elseif=None):
+    with st.spinner("Generating response...."):
+        print("Session State " + str(st.session_state))
+        cust_query = st.session_state.widget
+        print(cust_query)
+        generated_response = run_llm(cust_query, fetch_conversation_till_now())
+        st.session_state["user_prompt_history"].append(cust_query)
+        processed_response = revise_user_state_based_upon_response(str(generated_response))
+        print(processed_response)
+        st.session_state["chat_answers_history"].append(processed_response)
 st.text_input("Prompt", key="widget", placeholder="Enter your prompt here ..", on_change=submit)
 
 def revise_user_state_based_upon_response(generated_response):
@@ -93,9 +111,9 @@ def revise_user_state_based_upon_response(generated_response):
                         "explain a little more in detail")
             else:
 
-                return generated_response + (". To help you further I will need you to take photo of the tshirt"
+                return generated_response + (". To help you further I will need you to take photo of the tshirt. "
                                              "You need to turn the tshirt inside out and then hold your phone over the top of image. Just like the one I am "
-                                             "attaching in the image"
+                                             "attaching in the image. "
                                              "If you don't have a tshirt, you can pick a tshirt with relevent issue from our gallery")
 
 
@@ -120,47 +138,7 @@ def get_sizing_category_for_issue(gernerated_response):
     return generate_sizing_category_for_issue(issue)
 
 
-if img_folder:
-    with open("predict/tmp.zip", "wb") as f:
-        f.write(img_folder.read())
-    # Extract all contents of zip folder to a temporary folder
-    with  ZipFile("temp.zip", "r") as zip_ref:
-        zip_ref.extractall("predict")
-    st.success("Folder uploaded and extracted successfully")
 
-IMAGE_CHECKED = False
-if check_images:
-    # Display the list of clean_tshirts in the uploaded folder
-    print(selected_folder)
-    directory = "samples/" + selected_folder
-    image_files = [f for f in os.listdir(directory)]
-    for image_file in image_files:
-        image_path = os.path.join(directory, image_file)
-        image = Image.open(image_path)
-        st.image(image, use_column_width=True)
-    IMAGE_CHECKED = True
-    # st.write("List of clean_tshirts in  the uploaded folder:")
-    # print(image_files)
-    # st.write(image_files[0])
-
-if download_images:
-    directory = "samples/" + selected_folder
-    image_files = [f for f in os.listdir(directory)]
-    zip_file_name = f"{selected_folder}_images.zip"
-
-    with st.spinner(f"Creating {zip_file_name}.... "):
-        st.write("Downloading...")
-        with ZipFile(zip_file_name, 'w') as zipf:
-            for image_file in image_files:
-                image_path = os.path.join(directory, image_file)
-                zipf.write(image_path, os.path.basename(image_file))
-        with open(zip_file_name, "rb") as f:
-            zip_contents = f.read()
-
-        # Encode the zip file as base64
-        zip_b64 = base64.b64encode(zip_contents).decode()
-        href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
-        st.markdown(href, unsafe_allow_html=True)
 
 
 def fetch_conversation_till_now():
@@ -273,14 +251,56 @@ if img_file is not None:
             generated_response = "Apologies for my earlier reply. " + generated_response
         message(generated_response, key=i.__str__())
 
-if st.button('Check result'):
-    if model == "blue":
-        model = yolo_chirag()
-    else:
-        model = yolo_chirag()
+#if st.button('Check result'):
+    #if model == "blue":
+       # model = yolo_chirag()
+    #else:
+       # model = yolo_chirag()
 
     st.write('We are working on your query. Please wait.')
     predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
     predicted_image = Image.open(predicted_image_file)
     predicted_image = np.asarray(predicted_image).astype('uint8')
     st.image(Image.fromarray(predicted_image), caption='Predicted Image')
+
+if img_folder:
+    with open("predict/tmp.zip", "wb") as f:
+        f.write(img_folder.read())
+    # Extract all contents of zip folder to a temporary folder
+    with  ZipFile("temp.zip", "r") as zip_ref:
+        zip_ref.extractall("predict")
+    st.success("Folder uploaded and extracted successfully")
+
+IMAGE_CHECKED = False
+if check_images:
+    # Display the list of clean_tshirts in the uploaded folder
+    print(selected_folder)
+    directory = "samples/" + selected_folder
+    image_files = [f for f in os.listdir(directory)]
+    for image_file in image_files:
+        image_path = os.path.join(directory, image_file)
+        image = Image.open(image_path)
+        st.image(image, use_column_width=True)
+    IMAGE_CHECKED = True
+    # st.write("List of clean_tshirts in  the uploaded folder:")
+    # print(image_files)
+    # st.write(image_files[0])
+
+if download_images:
+    directory = "samples/" + selected_folder
+    image_files = [f for f in os.listdir(directory)]
+    zip_file_name = f"{selected_folder}_images.zip"
+
+    with st.spinner(f"Creating {zip_file_name}.... "):
+        st.write("Downloading...")
+        with ZipFile(zip_file_name, 'w') as zipf:
+            for image_file in image_files:
+                image_path = os.path.join(directory, image_file)
+                zipf.write(image_path, os.path.basename(image_file))
+        with open(zip_file_name, "rb") as f:
+            zip_contents = f.read()
+
+        # Encode the zip file as base64
+        zip_b64 = base64.b64encode(zip_contents).decode()
+        href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
+        st.markdown(href, unsafe_allow_html=True)

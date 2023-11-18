@@ -12,46 +12,44 @@ MOBILE_LENGTH = 15.8
 MOBILE_WIDTH = 7.3
 
 
-def build_t_shirt_key_points(predictions):
+def get_ratios_for_tshirt(predictions):
+    chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(predictions)
+    print("C/S: ")
+    print(round(chest_length / shoulder_length, 2))
+    print("C/L: ")
+    print(round(chest_length / tshirt_length, 2))
+    print("S/L: ")
+    print(round(shoulder_length / tshirt_length, 2))
+    return (round(chest_length / shoulder_length, 2),round(chest_length / tshirt_length, 2)
+            ,round(shoulder_length / tshirt_length, 2))
+def get_actual_length_for_tshirt(predictions):
+    chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(predictions)
+    p_x, p_y = get_pixel_count_for_one_cm(predictions)
+    print("Chest:", chest_length / p_x * 0.97)
+    print("Shoulder:", shoulder_length / (p_x * 0.95))
+    print("Tshirt:", tshirt_length / p_y)
+    return (chest_length / (p_x * 0.97)
+            , shoulder_length / (p_x * 0.95), tshirt_length / p_y)
 
 
-    t_shirt_builder = TShirtBuilder()
-    t_shirt_contour = []
-    t_shirt_class = [x for x in predictions if x.class_ == "t_shirt"][0]
-    for point in t_shirt_class.points:
-        t_shirt_contour.append((point.x, point.y))
-    t_shirt_contour = np.array(t_shirt_contour)
-    t_shirt_contour_json = json.dumps(t_shirt_contour.tolist())
-    #with open("sizing/t_shirt_contour.json", "w+") as json_file:
-        #json.dump(t_shirt_contour_json, json_file, indent=2)
-
-    left_sleeve_contour = []
-    left_sleeve_class = [x for x in predictions if x.class_ == "left_sleeve_verified"][0]
-    for point in left_sleeve_class.points:
-        left_sleeve_contour.append((point.x, point.y))
-    left_sleeve_contour = np.array(left_sleeve_contour)
-    left_sleeve_contour = json.dumps(left_sleeve_contour.tolist())
-    #with open("sizing/left_sleeve_contour.json", "w+") as json_file:
-        #json.dump(left_sleeve_contour, json_file, indent=2)
-
+def get_pixel_count_for_one_cm(predictions):
     mobile_contour = []
-    p_x = 0
-    p_y = 0
+
 
     mobile_class = [x for x in predictions if x.class_ == "mobile"][0]
     for point in mobile_class.points:
         mobile_contour.append((point.x, point.y))
     mobile_contour = np.array(mobile_contour)
-        #print("mobile")
-    x_coordinates = mobile_contour[:,0]
+    # print("mobile")
+    x_coordinates = mobile_contour[:, 0]
     y_coordinates = mobile_contour[:, 1]
     # Find min and max values along each axis
     min_x, max_x = np.min(x_coordinates), np.max(x_coordinates)
     min_y, max_y = np.min(y_coordinates), np.max(y_coordinates)
-    x_avg = (min_x + max_x)/2
+    x_avg = (min_x + max_x) / 2
     y_avg = (min_y + max_y) / 2
     indices = np.where(y_coordinates < y_avg)
-    #print("indices", indices)
+    # print("indices", indices)
     filtered_top_coordinates = x_coordinates[indices]
     top_min_x, top_max_x = np.min(filtered_top_coordinates), np.max(filtered_top_coordinates)
     indices = np.where(y_coordinates > y_avg)
@@ -66,13 +64,28 @@ def build_t_shirt_key_points(predictions):
 
     print("Top X:", top_min_x, top_max_x)
     print("Bot X:", bot_min_x, bot_max_x)
-    print("Left Y:",left_min_y, left_max_y )
+    print("Left Y:", left_min_y, left_max_y)
     print("Right Y:", right_min_y, right_max_y)
-    p_x = (((top_max_x - top_min_x) + (bot_max_x - bot_min_x))/2)/MOBILE_WIDTH
-    p_y = (((left_max_y - left_min_y) + (right_max_y - right_min_y)) / 2)/MOBILE_LENGTH
-    p_y = p_y*0.95
-    if p_x > 1.2*p_y:
-         p_x = 0.95*p_x
+    p_x = (((top_max_x - top_min_x) + (bot_max_x - bot_min_x)) / 2) / MOBILE_WIDTH
+    p_y = (((left_max_y - left_min_y) + (right_max_y - right_min_y)) / 2) / MOBILE_LENGTH
+    p_y = p_y * 0.95
+    if p_x > 1.2 * p_y:
+        p_x = 0.95 * p_x
+    return p_x, p_y
+
+
+def build_t_shirt_key_points(predictions):
+
+
+    t_shirt_builder = TShirtBuilder()
+    t_shirt_contour = []
+    t_shirt_class = [x for x in predictions if x.class_ == "t_shirt"][0]
+    for point in t_shirt_class.points:
+        t_shirt_contour.append((point.x, point.y))
+    t_shirt_contour = np.array(t_shirt_contour)
+    t_shirt_contour_json = json.dumps(t_shirt_contour.tolist())
+    #with open("sizing/t_shirt_contour.json", "w+") as json_file:
+        #json.dump(t_shirt_contour_json, json_file, indent=2)
 
 
 
@@ -107,17 +120,11 @@ def build_t_shirt_key_points(predictions):
 
     tshirt_length = (average_y_waist - y_neck)/1
     print("tshirt length: " + str(tshirt_length))
-    print("C/S: " )
-    print(round(chest_length/shoulder_length, 2))
-    print("C/L: ")
-    print(round(chest_length / tshirt_length,2))
-    print("S/L: ")
-    print(round(shoulder_length / tshirt_length,2))
-    print("Chest:" , chest_length/p_x*0.97)
-    print("Shoulder:", shoulder_length/(p_x*0.95))
-    print("Tshirt:", tshirt_length/p_y)
-    return (chest_length/(p_x*0.97)
-            ,shoulder_length/(p_x*0.95), tshirt_length/p_y)
+    return chest_length , shoulder_length, tshirt_length
+
+
+
+
 
 
 
