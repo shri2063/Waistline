@@ -29,6 +29,8 @@ if "chat_answers_history" not in st.session_state:
     st.session_state["chat_answers_history"] = []
 if "issue" not in st.session_state:
     st.session_state.issue = 'quality'
+if "generated_issue" not in st.session_state:
+    st.session_state.generated_issue = ''
 GENERATED_ISSUE: str = ''
 # Upload an image and set some options for demo purposes
 
@@ -47,7 +49,8 @@ def submit(elseif=None):
         cust_query = st.session_state.widget
         generated_response = run_llm(query=cust_query)
         global  GENERATED_ISSUE
-        GENERATED_ISSUE = generated_response
+        st.session_state.generated_issue = str(generated_response)
+        print("Generated Issue", GENERATED_ISSUE)
         print(generated_response)
         if "Sizing Issue" in str(generated_response):
             st.session_state.issue = 'sizing'
@@ -215,7 +218,21 @@ if img_file:
 if st.button('Summarize'):
     #messages.append({'role': 'user', 'content': 'Please summarize the discussion till now in format and structure ,so I can directly pass it as a prefix for my next prompt with no other context required  '})
     #response = chatgpt_call_with_memory(messages)
-    response = find_sizing_category_for_issue(GENERATED_ISSUE)
+    # Split the string based on "Issue:"
+    #GENERATED_ISSUE = "Thanks . I understand that you find tshirt chest size too long, but can you exaplain in detail if tshirt chest is wider or longer than you expected. Noting down the Issue:Sizing:chest size is longer than expected "
+
+
+    print(st.session_state.generated_issue)
+    split_result = str(st.session_state.generated_issue).split("Noting down the Issue")
+    print(split_result)
+    issue = ''
+    # Check if there's a second part (index 1) after the split
+    if len(split_result) > 1:
+        # Extract the string after "Issue:"
+        issue = split_result[1].strip()
+
+    print("Issue", issue)
+    response = find_sizing_category_for_issue(issue)
     st.write(response)
 
 
