@@ -4,7 +4,7 @@ from langchain import PromptTemplate
 template = """Answer the question based on the context below. You have to select correct Issue Category for 
 the User query provided in the Input query. In the context below you have been provided multiple Issue categories along with 
 multiple examples for each issue category. In your Answer just mention the issue name, for example - issue: Chest size is smaller
-or issue: tshirt in general oversize.If the question cannot be answered using the information provided answer
+or issue: tshirt in general oversize.Please note you have to select only from the given categories. Strictly do not improvise or innovate new  categories If the category  cannot be decided using the information provided answer
 with "I don't know"
 
 Context: 
