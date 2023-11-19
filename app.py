@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.4")
+st.header("WaistLyne v1.5")
 # st.session_state.widget = ''
 i = 45
 
@@ -248,7 +248,7 @@ st.text_input("Prompt", key="widget", placeholder="Enter your prompt here ..", o
 
 def run_change_detector(generated_response):
     if st.session_state.issue_category == '':
-        if "Issue:Sizing" in str(generated_response) or "Issue: Sizing" in str(generated_response):
+        if "Sizing:" in str(generated_response)  in str(generated_response):
             st.session_state.issue_category = 'sizing'
             st.session_state.sizing_fist_ref = False
             print("Session State: " + str(st.session_state.issue_category))
