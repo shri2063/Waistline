@@ -89,59 +89,62 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
     if st.button('Submit Image'):
         if  st.session_state.t_shirt_size not in ('XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'):
             st.write("Tshirt size is not entered properly. Please select between XS,S,M,L,XL,2XL,3XL,4XL ")
-        if sizing_img is None:
+        elif sizing_img is None:
             st.write("please upload an image")
-        predictions = model_json_prediction_for_sizing_issue('sizing/sizing_img.jpg')
-        predictions = get_corner_coordinates_for_tshirt(predictions)
-        corrected_predictions = correct_class_for_sleeves(predictions)
-        context = 'Here is the information available for a tshirt regarding its sizing. '
-        tshirt_size = st.session_state.t_shirt_size
-        try:
-            CbyS, CbyL, SbyL = get_ratios_for_tshirt(corrected_predictions)
-            if t_shirt_size_chart_ratio[tshirt_size]['C/S'][0] <= CbyS <= t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
-                context += "Chest by Shoulder ratio appears to be within range. "
-            elif CbyS < t_shirt_size_chart_ratio[tshirt_size]['C/S'][0]:
-                context += ("Chest by Shoulder ratio is less than expected. It means either Chest is of smaller size. "
-                            "or Shoulder is of larger size. ")
-            elif CbyS > t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
-                context += ("Chest by Shoulder ratio is greater than expected. It means either Chest is "
-                            "of larger  size or Shoulder is of smaller size. ")
+        else:
+            st.write("We are working on our request. Please wait")
+            predictions = model_json_prediction_for_sizing_issue('sizing/sizing_img.jpg')
+            predictions = get_corner_coordinates_for_tshirt(predictions)
+            corrected_predictions = correct_class_for_sleeves(predictions)
+            context = 'Here is the information available for a tshirt regarding its sizing. '
+            tshirt_size = st.session_state.t_shirt_size
+            try:
+                CbyS, CbyL, SbyL = get_ratios_for_tshirt(corrected_predictions)
+                if t_shirt_size_chart_ratio[tshirt_size]['C/S'][0] <= CbyS <= t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
+                    context += "Chest by Shoulder ratio appears to be within range. "
+                elif CbyS < t_shirt_size_chart_ratio[tshirt_size]['C/S'][0]:
+                    context += ("Chest by Shoulder ratio is less than expected. It means either Chest is of smaller size. "
+                                "or Shoulder is of larger size. ")
+                elif CbyS > t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
+                    context += ("Chest by Shoulder ratio is greater than expected. It means either Chest is "
+                                "of larger  size or Shoulder is of smaller size. ")
 
-            if t_shirt_size_chart_ratio[tshirt_size]['C/L'][0] <= CbyL <= t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
-                context += "Chest by Tshirt length ratio appears to be within range. "
-            elif CbyL < t_shirt_size_chart_ratio[tshirt_size]['C/L'][0]:
-                context += ("Chest by Tshirt length ratio is less than expected. It means either Chest is of smaller "
-                            "size or Tshirt length is of larger size. ")
-            elif CbyL > t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
-                context += ("Chest by Tshirt length ratio is greater than expected. It means either Chest is "
-                            "of larger  size or Tshirt length is of smaller size. ")
+                if t_shirt_size_chart_ratio[tshirt_size]['C/L'][0] <= CbyL <= t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
+                    context += "Chest by Tshirt length ratio appears to be within range. "
+                elif CbyL < t_shirt_size_chart_ratio[tshirt_size]['C/L'][0]:
+                    context += ("Chest by Tshirt length ratio is less than expected. It means either Chest is of smaller "
+                                "size or Tshirt length is of larger size. ")
+                elif CbyL > t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
+                    context += ("Chest by Tshirt length ratio is greater than expected. It means either Chest is "
+                                "of larger  size or Tshirt length is of smaller size. ")
 
-            if t_shirt_size_chart_ratio[tshirt_size]['S/L'][0] <= SbyL <= t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
-                context += "Shoulder by Tshirt length ratio appears to be within range. "
-            elif SbyL < t_shirt_size_chart_ratio[tshirt_size]['S/L'][0]:
-                context += (
-                    "Shoulder by Tshirt length ratio is less than expected. It means either Shoulder is of smaller "
-                    "size or Tshirt length is of larger size. ")
-            elif SbyL > t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
-                context += ("Shoulder by Tshirt length ratio is greater than expected. It means either Shoulder is "
-                            "of larger  size or Tshirt length is of smaller size. ")
+                if t_shirt_size_chart_ratio[tshirt_size]['S/L'][0] <= SbyL <= t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
+                    context += "Shoulder by Tshirt length ratio appears to be within range. "
+                elif SbyL < t_shirt_size_chart_ratio[tshirt_size]['S/L'][0]:
+                    context += (
+                        "Shoulder by Tshirt length ratio is less than expected. It means either Shoulder is of smaller "
+                        "size or Tshirt length is of larger size. ")
+                elif SbyL > t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
+                    context += ("Shoulder by Tshirt length ratio is greater than expected. It means either Shoulder is "
+                                "of larger  size or Tshirt length is of smaller size. ")
 
-            # st.write(context)
-            # st.write(st.session_state.generated_issue)
+                # st.write(context)
+                # st.write(st.session_state.generated_issue)
 
-            response = generate_response_based_upon_sizing_calculations(st.session_state.generated_issue, context)
-            st.session_state.sizing_fist_ref = True
-            response = response + (" However, if you want me to get precise calculation. I would like to "
-                                   "have multiple images of the same tshirt in a zip folder.Also I need to have "
-                                   "reference of any mobile to be placed on the image to be used as a reference ")
-            # st.write(response)
-            i = i + 1
-            st.session_state["chat_messages"].append({"is_user": False, "message": response})
-            message(response, key=i.__str__())
-        except Exception as e:
-            print(e.__str__())
+                response = generate_response_based_upon_sizing_calculations(st.session_state.generated_issue, context)
+                st.session_state.sizing_fist_ref = True
+                response = response + (" However, if you want me to get precise calculation. I would like to "
+                                       "have multiple images of the same tshirt in a zip folder.Also I need to have "
+                                       "reference of any mobile to be placed on the image to be used as a reference ")
+                # st.write(response)
+                i = i + 1
+                st.session_state["chat_messages"].append({"is_user": False, "message": response})
+                message(response, key=i.__str__())
+            except Exception as e:
+                print(e.__str__())
 
 print("sizing_fist_ref", st.session_state.sizing_fist_ref)
+
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == True:
     sample_image = Image.open("sizing/sample_sizing_img_w_mobile.jpeg")
     st.image(sample_image, caption="Sample Image", width=300)
@@ -149,74 +152,78 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
     CHEST = []
     SHOULDER = []
     TSHIRT = []
-    if sizing_folder:
-        with open("sizing/tmp.zip", "wb") as f:
-            if os.path.exists("sizing/predict"):
-                shutil.rmtree("sizing/predict")
-            f.write(sizing_folder.read())
-            # Extract all contents of zip folder to a temporary folder
-            with  ZipFile("sizing/tmp.zip", "r") as zip_ref:
-                zip_ref.extractall("sizing/predict")
-                st.success("Folder uploaded and extracted successfully")
-                directory = "sizing/predict/images"
-                image_files = [f for f in os.listdir(directory)]
-                for image_file in image_files:
-                    print(image_file)
-                    predictions = model_json_prediction_for_sizing_issue(os.path.join(directory, image_file))
-                    predictions = get_corner_coordinates_for_tshirt(predictions)
-                    corrected_predictions = correct_class_for_sleeves(predictions)
+    if st.button('Submit Folder'):
+        if sizing_img == None:
+            st.write("Please upload zip folder with images of tshirt as described above")
+        else:
+            st.write("We are working on our request. Please wait")
+            with open("sizing/tmp.zip", "wb") as f:
+                if os.path.exists("sizing/predict"):
+                    shutil.rmtree("sizing/predict")
+                f.write(sizing_folder.read())
+                # Extract all contents of zip folder to a temporary folder
+                with  ZipFile("sizing/tmp.zip", "r") as zip_ref:
+                    zip_ref.extractall("sizing/predict")
+                    st.success("Folder uploaded and extracted successfully")
+                    directory = "sizing/predict/images"
+                    image_files = [f for f in os.listdir(directory)]
+                    for image_file in image_files:
+                        print(image_file)
+                        predictions = model_json_prediction_for_sizing_issue(os.path.join(directory, image_file))
+                        predictions = get_corner_coordinates_for_tshirt(predictions)
+                        corrected_predictions = correct_class_for_sleeves(predictions)
 
-                    try:
-                        chest_length, shoulder_length, tshirt_length = get_actual_length_for_tshirt(corrected_predictions)
-                        CHEST.append(chest_length)
-                        SHOULDER.append(shoulder_length)
-                        TSHIRT.append(tshirt_length)
-                        chest_avg = round(sum(CHEST) / len(CHEST),2)
-                        print("Chest: ", chest_avg)
-                        shoulder_avg = round(sum(SHOULDER) / len(SHOULDER),2)
-                        print("Shoulder: ", shoulder_avg)
-                        tshirt_avg = round(sum(TSHIRT)/len(TSHIRT),2)
-                        print("Tshirt: ", tshirt_avg)
-                    except ValueError as e:
-                        st.write(e.__str__())
-                    except Exception as e:
-                        print(e.__str__())
-                tshirt_size = st.session_state.t_shirt_size
-                chest_min, chest_max = t_shirt_size_chart_length[tshirt_size]['chest'][0], \
-                t_shirt_size_chart_length[tshirt_size]['chest'][1]
-                shoulder_min, shoulder_max = t_shirt_size_chart_length[tshirt_size]['shoulder'][0], \
-                t_shirt_size_chart_length[tshirt_size]['shoulder'][1]
-                tshirt_min, tshirt_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
-                t_shirt_size_chart_length[tshirt_size]['tshirt'][1]
+                        try:
+                            chest_length, shoulder_length, tshirt_length = get_actual_length_for_tshirt(corrected_predictions)
+                            CHEST.append(chest_length)
+                            SHOULDER.append(shoulder_length)
+                            TSHIRT.append(tshirt_length)
+                            chest_avg = round(sum(CHEST) / len(CHEST),2)
+                            print("Chest: ", chest_avg)
+                            shoulder_avg = round(sum(SHOULDER) / len(SHOULDER),2)
+                            print("Shoulder: ", shoulder_avg)
+                            tshirt_avg = round(sum(TSHIRT)/len(TSHIRT),2)
+                            print("Tshirt: ", tshirt_avg)
+                        except ValueError as e:
+                            st.write(e.__str__())
+                        except Exception as e:
+                            print(e.__str__())
+                    tshirt_size = st.session_state.t_shirt_size
+                    chest_min, chest_max = t_shirt_size_chart_length[tshirt_size]['chest'][0], \
+                    t_shirt_size_chart_length[tshirt_size]['chest'][1]
+                    shoulder_min, shoulder_max = t_shirt_size_chart_length[tshirt_size]['shoulder'][0], \
+                    t_shirt_size_chart_length[tshirt_size]['shoulder'][1]
+                    tshirt_min, tshirt_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
+                    t_shirt_size_chart_length[tshirt_size]['tshirt'][1]
 
-                context = ('Here is the information available for a tshirt regarding its sizing. Also please in the response provide'
-                           'as much as numerical lengths along with min and  max values possible')
-                if chest_min <= chest_avg <= chest_max:
-                    context += f"Tshirt's Chest length {chest_avg} cm is within expected range of {chest_min} cm  and {chest_max}cm"
-                elif chest_avg < chest_min:
-                    context += f"Tshirt's Chest length {chest_avg}  cm is lesser than expected range of {chest_min} cm"
-                elif chest_avg > chest_max:
-                    context += f"Tshirt's Chest length {chest_avg} cm is greater than expected range of {chest_max} cm"
+                    context = ('Here is the information available for a tshirt regarding its sizing. Also please in the response provide'
+                               'as much as numerical lengths along with min and  max values possible')
+                    if chest_min <= chest_avg <= chest_max:
+                        context += f"Tshirt's Chest length {chest_avg} cm is within expected range of {chest_min} cm  and {chest_max}cm"
+                    elif chest_avg < chest_min:
+                        context += f"Tshirt's Chest length {chest_avg}  cm is lesser than expected range of {chest_min} cm"
+                    elif chest_avg > chest_max:
+                        context += f"Tshirt's Chest length {chest_avg} cm is greater than expected range of {chest_max} cm"
 
-                if shoulder_min <= shoulder_avg <= shoulder_max:
-                    context += f"Tshirt's Shoulder length {shoulder_avg} cm is within expected range  of {shoulder_min} cm and {shoulder_max} cm"
-                elif shoulder_avg < shoulder_min:
-                    context += f"Tshirt's Shoulder length {shoulder_avg} cm is lesser than expected range of {shoulder_min}cm"
-                elif shoulder_avg > shoulder_max:
-                    context += f"Tshirt's Shoulder length {shoulder_avg} cm is greater than expected range of {shoulder_max}cm"
+                    if shoulder_min <= shoulder_avg <= shoulder_max:
+                        context += f"Tshirt's Shoulder length {shoulder_avg} cm is within expected range  of {shoulder_min} cm and {shoulder_max} cm"
+                    elif shoulder_avg < shoulder_min:
+                        context += f"Tshirt's Shoulder length {shoulder_avg} cm is lesser than expected range of {shoulder_min}cm"
+                    elif shoulder_avg > shoulder_max:
+                        context += f"Tshirt's Shoulder length {shoulder_avg} cm is greater than expected range of {shoulder_max}cm"
 
-                if tshirt_min <= tshirt_avg <= tshirt_max:
-                    context += f"Tshirt's  length {tshirt_avg} cm is within expected range  of {tshirt_min} cm and {tshirt_max} cm"
-                elif tshirt_avg < tshirt_min:
-                    context += f"Tshirt's  length {tshirt_avg} cm is lesser than expected range of {tshirt_min}cm"
-                elif tshirt_avg > tshirt_max:
-                    context += f"Tshirt's Shoulder length {tshirt_avg} cm is greater than expected range of {tshirt_max}cm"
+                    if tshirt_min <= tshirt_avg <= tshirt_max:
+                        context += f"Tshirt's  length {tshirt_avg} cm is within expected range  of {tshirt_min} cm and {tshirt_max} cm"
+                    elif tshirt_avg < tshirt_min:
+                        context += f"Tshirt's  length {tshirt_avg} cm is lesser than expected range of {tshirt_min}cm"
+                    elif tshirt_avg > tshirt_max:
+                        context += f"Tshirt's Shoulder length {tshirt_avg} cm is greater than expected range of {tshirt_max}cm"
 
-                response = generate_response_based_upon_sizing_calculations(st.session_state.generated_issue,
-                                                                                context)
-                i = i + 1
-                message(response, key=i.__str__())
-                st.session_state["chat_messages"].append({"is_user": False, "message": response})
+                    response = generate_response_based_upon_sizing_calculations(st.session_state.generated_issue,
+                                                                                    context)
+                    i = i + 1
+                    message(response, key=i.__str__())
+                    st.session_state["chat_messages"].append({"is_user": False, "message": response})
 
 
 
@@ -243,6 +250,7 @@ def run_change_detector(generated_response):
     if st.session_state.issue_category == '':
         if "Issue:Sizing" in str(generated_response):
             st.session_state.issue_category = 'sizing'
+            st.session_state.sizing_fist_ref = False
             print("Session State: " + str(st.session_state.issue_category))
             category = get_sizing_category_for_issue(generated_response)
             st.session_state.sizing_category = category
