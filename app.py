@@ -153,7 +153,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
     SHOULDER = []
     TSHIRT = []
     if st.button('Submit Folder'):
-        if sizing_img == None:
+        if sizing_folder is None:
             st.write("Please upload zip folder with images of tshirt as described above")
         else:
             st.write("We are working on our request. Please wait")
