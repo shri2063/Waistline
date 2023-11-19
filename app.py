@@ -252,7 +252,7 @@ def run_change_detector(generated_response):
             st.session_state.issue_category = 'sizing'
             st.session_state.sizing_fist_ref = False
             print("Session State: " + str(st.session_state.issue_category))
-            st.write("Generated response: " + generated_response)
+            #st.write("Generated response: " + generated_response)
             category = get_sizing_category_for_issue(generated_response)
             st.session_state.sizing_category = category
             print("Category", category)
@@ -461,12 +461,4 @@ if download_images:
         href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
         st.markdown(href, unsafe_allow_html=True)
 
-st.markdown(""" 
-        <script>
-            document.querySelector('.element-to-scroll-to').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'end',
-                inline: 'nearest'
-            });
-        </script>
-    """, unsafe_allow_html=True)
+
