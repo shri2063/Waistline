@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.5")
+st.header("WaistLyne v1.6")
 # st.session_state.widget = ''
 i = 45
 
@@ -73,9 +73,7 @@ if st.session_state["chat_messages"]:
         else:
             message(chat_message["message"], key=i.__str__())
 
-
-
-#st.session_state.issue_category = 'sizing'
+# st.session_state.issue_category = 'sizing'
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
@@ -87,7 +85,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
         sizing_img.save('sizing/sizing_img.jpg')
 
     if st.button('Submit Image'):
-        if  st.session_state.t_shirt_size not in ('XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'):
+        if st.session_state.t_shirt_size not in ('XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'):
             st.write("Tshirt size is not entered properly. Please select between XS,S,M,L,XL,2XL,3XL,4XL ")
         elif sizing_img is None:
             st.write("please upload an image")
@@ -100,25 +98,30 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
             tshirt_size = st.session_state.t_shirt_size
             try:
                 CbyS, CbyL, SbyL = get_ratios_for_tshirt(corrected_predictions)
-                if t_shirt_size_chart_ratio[tshirt_size]['C/S'][0] <= CbyS <= t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
+                if t_shirt_size_chart_ratio[tshirt_size]['C/S'][0] <= CbyS <= \
+                        t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
                     context += "Chest by Shoulder ratio appears to be within range. "
                 elif CbyS < t_shirt_size_chart_ratio[tshirt_size]['C/S'][0]:
-                    context += ("Chest by Shoulder ratio is less than expected. It means either Chest is of smaller size. "
-                                "or Shoulder is of larger size. ")
+                    context += (
+                        "Chest by Shoulder ratio is less than expected. It means either Chest is of smaller size. "
+                        "or Shoulder is of larger size. ")
                 elif CbyS > t_shirt_size_chart_ratio[tshirt_size]['C/S'][1]:
                     context += ("Chest by Shoulder ratio is greater than expected. It means either Chest is "
                                 "of larger  size or Shoulder is of smaller size. ")
 
-                if t_shirt_size_chart_ratio[tshirt_size]['C/L'][0] <= CbyL <= t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
+                if t_shirt_size_chart_ratio[tshirt_size]['C/L'][0] <= CbyL <= \
+                        t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
                     context += "Chest by Tshirt length ratio appears to be within range. "
                 elif CbyL < t_shirt_size_chart_ratio[tshirt_size]['C/L'][0]:
-                    context += ("Chest by Tshirt length ratio is less than expected. It means either Chest is of smaller "
-                                "size or Tshirt length is of larger size. ")
+                    context += (
+                        "Chest by Tshirt length ratio is less than expected. It means either Chest is of smaller "
+                        "size or Tshirt length is of larger size. ")
                 elif CbyL > t_shirt_size_chart_ratio[tshirt_size]['C/L'][1]:
                     context += ("Chest by Tshirt length ratio is greater than expected. It means either Chest is "
                                 "of larger  size or Tshirt length is of smaller size. ")
 
-                if t_shirt_size_chart_ratio[tshirt_size]['S/L'][0] <= SbyL <= t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
+                if t_shirt_size_chart_ratio[tshirt_size]['S/L'][0] <= SbyL <= \
+                        t_shirt_size_chart_ratio[tshirt_size]['S/L'][1]:
                     context += "Shoulder by Tshirt length ratio appears to be within range. "
                 elif SbyL < t_shirt_size_chart_ratio[tshirt_size]['S/L'][0]:
                     context += (
@@ -174,15 +177,16 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                         corrected_predictions = correct_class_for_sleeves(predictions)
 
                         try:
-                            chest_length, shoulder_length, tshirt_length = get_actual_length_for_tshirt(corrected_predictions)
+                            chest_length, shoulder_length, tshirt_length = get_actual_length_for_tshirt(
+                                corrected_predictions)
                             CHEST.append(chest_length)
                             SHOULDER.append(shoulder_length)
                             TSHIRT.append(tshirt_length)
-                            chest_avg = round(sum(CHEST) / len(CHEST),2)
+                            chest_avg = round(sum(CHEST) / len(CHEST), 2)
                             print("Chest: ", chest_avg)
-                            shoulder_avg = round(sum(SHOULDER) / len(SHOULDER),2)
+                            shoulder_avg = round(sum(SHOULDER) / len(SHOULDER), 2)
                             print("Shoulder: ", shoulder_avg)
-                            tshirt_avg = round(sum(TSHIRT)/len(TSHIRT),2)
+                            tshirt_avg = round(sum(TSHIRT) / len(TSHIRT), 2)
                             print("Tshirt: ", tshirt_avg)
                         except ValueError as e:
                             st.write(e.__str__())
@@ -190,14 +194,15 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                             print(e.__str__())
                     tshirt_size = st.session_state.t_shirt_size
                     chest_min, chest_max = t_shirt_size_chart_length[tshirt_size]['chest'][0], \
-                    t_shirt_size_chart_length[tshirt_size]['chest'][1]
+                        t_shirt_size_chart_length[tshirt_size]['chest'][1]
                     shoulder_min, shoulder_max = t_shirt_size_chart_length[tshirt_size]['shoulder'][0], \
-                    t_shirt_size_chart_length[tshirt_size]['shoulder'][1]
+                        t_shirt_size_chart_length[tshirt_size]['shoulder'][1]
                     tshirt_min, tshirt_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
-                    t_shirt_size_chart_length[tshirt_size]['tshirt'][1]
+                        t_shirt_size_chart_length[tshirt_size]['tshirt'][1]
 
-                    context = ('Here is the information available for a tshirt regarding its sizing. Also please in the response provide'
-                               'as much as numerical lengths along with min and  max values possible')
+                    context = (
+                        'Here is the information available for a tshirt regarding its sizing. Also please in the response provide'
+                        'as much as numerical lengths along with min and  max values possible')
                     if chest_min <= chest_avg <= chest_max:
                         context += f"Tshirt's Chest length {chest_avg} cm is within expected range of {chest_min} cm  and {chest_max}cm"
                     elif chest_avg < chest_min:
@@ -220,13 +225,11 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                         context += f"Tshirt's Shoulder length {tshirt_avg} cm is greater than expected range of {tshirt_max}cm"
 
                     response = generate_response_based_upon_sizing_calculations(st.session_state.generated_issue,
-                                                                                    context)
+                                                                                context)
                     i = i + 1
                     message(response, key=i.__str__())
                     st.session_state["chat_messages"].append({"is_user": False, "message": response})
                     st.session_state.issue_category = ""
-
-
 
 
 def submit(elseif=None):
@@ -248,40 +251,38 @@ st.text_input("Prompt", key="widget", placeholder="Enter your prompt here ..", o
 
 
 def run_change_detector(generated_response):
-    if st.session_state.issue_category == '':
-        if "Sizing:" in str(generated_response)  in str(generated_response):
-            st.session_state.issue_category = 'sizing'
-            st.session_state.sizing_fist_ref = False
-            print("Session State: " + str(st.session_state.issue_category))
-            #st.write("Generated response: " + generated_response)
-            category = get_sizing_category_for_issue(generated_response)
-            st.session_state.sizing_category = category
-            print("Category", category)
-            if category == "0":
-                st.session_state.issue_category = ''
+    if "Sizing:" in generated_response:
+        st.session_state.issue_category = 'sizing'
+        st.session_state.sizing_fist_ref = False
+        print("Session State: " + str(st.session_state.issue_category))
+        # st.write("Generated response: " + generated_response)
+        category = get_sizing_category_for_issue(generated_response)
+        st.session_state.sizing_category = category
+        print("Category", category)
+        if category == "0":
+            st.session_state.issue_category = ''
 
-                return ("I am really sorry. I understand you have issue in sizing related to tshirt."
-                        "But I am not able to clearly understand the exact issue. If you don't mind can you"
-                        "explain a little more in detail")
-            else:
+            return ("I am really sorry. I understand you have issue in sizing related to tshirt."
+                    "But I am not able to clearly understand the exact issue. If you don't mind can you"
+                    "explain a little more in detail")
+        else:
 
-                return generated_response + (". To provide additional assistance, please take a photo of "
-                                             "the T-shirt and enter its size in the input box below. "
-                                             "Ensure that you turn the T-shirt inside out and hold "
-                                             "your phone over the top of the T-shirt, similar t"
-                                             "o the example image attached. If you don't have "
-                                             "a T-shirt available, you can select a relevant "
-                                             "T-shirt with an issue from our gallery,"
-                                             " as this is a demonstration.")
+            return generated_response + (". To provide additional assistance, please take a photo of "
+                                         "the T-shirt and enter its size in the input box below. "
+                                         "Ensure that you turn the T-shirt inside out and hold "
+                                         "your phone over the top of the T-shirt, similar t"
+                                         "o the example image attached. If you don't have "
+                                         "a T-shirt available, you can select a relevant "
+                                         "T-shirt with an issue from our gallery,"
+                                         " as this is a demonstration.")
 
-
-
-        elif "Issue:Quality" in str(generated_response):
-            st.session_state.issue_category = 'quality'
-            print("Session State: " + str(st.session_state.issue_category))
+    elif "Quality:" in str(generated_response):
+        st.session_state.issue_category = 'quality'
+        print("Session State: " + str(st.session_state.issue_category))
         return generated_response
-    st.session_state.issue_category = ""
-    return generated_response
+    else:
+        st.session_state.issue_category = ""
+        return generated_response
 
 
 def get_sizing_category_for_issue(gernerated_response):
@@ -295,7 +296,7 @@ def get_sizing_category_for_issue(gernerated_response):
         st.session_state.generated_issue = issue
 
     print("Issue", issue)
-    st.write("Issue " + issue)
+    # st.write("Issue " + issue)
     return generate_sizing_category_for_issue(issue)
 
 
@@ -462,5 +463,3 @@ if download_images:
         zip_b64 = base64.b64encode(zip_contents).decode()
         href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
         st.markdown(href, unsafe_allow_html=True)
-
-
