@@ -249,10 +249,10 @@ st.text_input("Prompt", key="widget", placeholder="Enter your prompt here ..", o
 def run_change_detector(generated_response):
     if st.session_state.issue_category == '':
         if "Issue:Sizing" or "Issue: Sizing" in str(generated_response):
-            st.write("Sizing identoif")
             st.session_state.issue_category = 'sizing'
             st.session_state.sizing_fist_ref = False
             print("Session State: " + str(st.session_state.issue_category))
+            st.write("Generated response: " + generated_response)
             category = get_sizing_category_for_issue(generated_response)
             st.session_state.sizing_category = category
             print("Category", category)
@@ -293,6 +293,7 @@ def get_sizing_category_for_issue(gernerated_response):
         st.session_state.generated_issue = issue
 
     print("Issue", issue)
+    st.write("Issue " + issue)
     return generate_sizing_category_for_issue(issue)
 
 
