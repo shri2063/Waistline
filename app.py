@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.2")
+st.header("WaistLyne v1.3")
 # st.session_state.widget = ''
 i = 45
 
