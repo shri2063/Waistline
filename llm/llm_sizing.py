@@ -18,7 +18,30 @@ CATEGORY_DICT = {
     10: "tshirt in general undersize",
     11: "tshirt in general oversize"
 }
-template = """Answer the question based on the context below. You have to select correct Issue Category for 
+openai_llm = OpenAI(
+    model_name="text-davinci-003",
+    openai_api_key=k
+)
+
+
+template_to_respond_to_sizing_query = """You are AI bot helping to resolve customer query regarding sizing issue
+in the tshirt. You have information about the tshirt available that is provided in the Context.Please answer
+the query of the customer based upon the Context provided 
+
+Context: {context}
+
+Question : {query}
+
+Answer : """
+
+def generate_response_based_upon_sizing_calculations(query: str, context: str):
+    prompt_template = PromptTemplate(input_variables=["query", "context"], template=template_to_respond_to_sizing_query)
+    response = openai_llm(prompt_template.format(query = query,context = context))
+    print("Sizing response", str(response))
+    return response
+
+
+template_to_identify_sizing_category = """Answer the question based on the context below. You have to select correct Issue Category for 
 the User query provided in the Input query. In the context below you have been provided multiple Issue categories along with 
 multiple examples for each issue category. In your Answer just mention the Category name, for example - Category 1. Please note you have to select only from the given categories. Strictly do not improvise or innovate new  categories If the category  cannot be decided using the information provided answer
 with "I don't know"
@@ -54,13 +77,10 @@ Question: {query}
 
 Answer: """
 
-openai_llm = OpenAI(
-    model_name="text-davinci-003",
-    openai_api_key=k
-)
+
 #encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 def generate_sizing_category_for_issue(query: str):
-    prompt_template = PromptTemplate(input_variables=["query"], template=template)
+    prompt_template = PromptTemplate(input_variables=["query"], template=template_to_identify_sizing_category)
     response = openai_llm(prompt_template.format(query = query))
     print("Category response", str(response))
     for index, category in enumerate(CATEGORY_LIST):

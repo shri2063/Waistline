@@ -8,6 +8,7 @@ from sizing.t_shirt_key_points.RIGHT_CHEST_CORNER_PT import RIGHT_CHEST_CORNER_P
 
 from sizing.t_shirt_key_points.RIGHT_SHOULDER_PT import RIGHT_SHOULDER_PT
 from sizing.t_shirt_key_points.RIGHT_WAIST_CORNER_PT import RIGHT_WAIST_CORNER_PT
+import  shutil
 MOBILE_LENGTH = 15.8
 MOBILE_WIDTH = 7.3
 
@@ -20,11 +21,15 @@ def get_ratios_for_tshirt(predictions):
     print(round(chest_length / tshirt_length, 2))
     print("S/L: ")
     print(round(shoulder_length / tshirt_length, 2))
-    return (round(chest_length / shoulder_length, 2),round(chest_length / tshirt_length, 2)
-            ,round(shoulder_length / tshirt_length, 2))
+    return (round(chest_length / shoulder_length, 2), round(chest_length / tshirt_length, 2)
+            , round(shoulder_length / tshirt_length, 2))
+
+
 def get_actual_length_for_tshirt(predictions):
     chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(predictions)
+
     p_x, p_y = get_pixel_count_for_one_cm(predictions)
+
     print("Chest:", chest_length / p_x * 0.97)
     print("Shoulder:", shoulder_length / (p_x * 0.95))
     print("Tshirt:", tshirt_length / p_y)
@@ -35,9 +40,11 @@ def get_actual_length_for_tshirt(predictions):
 def get_pixel_count_for_one_cm(predictions):
     mobile_contour = []
 
-
-    mobile_class = [x for x in predictions if x.class_ == "mobile"][0]
-    for point in mobile_class.points:
+    mobile_class = [x for x in predictions if x.class_ == "mobile"]
+    #print("Mobile class", mobile_class)
+    if mobile_class == []:
+        raise ValueError("No Mobile reference provided in the image")
+    for point in mobile_class[0].points:
         mobile_contour.append((point.x, point.y))
     mobile_contour = np.array(mobile_contour)
     # print("mobile")
@@ -75,8 +82,6 @@ def get_pixel_count_for_one_cm(predictions):
 
 
 def build_t_shirt_key_points(predictions):
-
-
     t_shirt_builder = TShirtBuilder()
     t_shirt_contour = []
     t_shirt_class = [x for x in predictions if x.class_ == "t_shirt"][0]
@@ -84,25 +89,24 @@ def build_t_shirt_key_points(predictions):
         t_shirt_contour.append((point.x, point.y))
     t_shirt_contour = np.array(t_shirt_contour)
     t_shirt_contour_json = json.dumps(t_shirt_contour.tolist())
-    #with open("sizing/t_shirt_contour.json", "w+") as json_file:
-        #json.dump(t_shirt_contour_json, json_file, indent=2)
-
-
+    # with open("sizing/t_shirt_contour.json", "w+") as json_file:
+    # json.dump(t_shirt_contour_json, json_file, indent=2)
 
     LEFT_WAIST_CORNER_PT(predictions, t_shirt_builder)
     LEFT_CHEST_CORNER_PT(predictions, t_shirt_builder)
     LEFT_SHOULDER_PT(predictions, t_shirt_builder, t_shirt_builder.LEFT_CHEST_CORNER_PT.border_contour_index + 1)
     LEFT_COLLAR_PT(predictions, t_shirt_builder, t_shirt_builder.LEFT_SHOULDER_PT.border_contour_index + 1)
     RIGHT_SHOULDER_PT(predictions, t_shirt_builder, t_shirt_builder.LEFT_SHOULDER_PT.border_contour_index + 1)
-    RIGHT_CHEST_CORNER_PT(predictions,  t_shirt_builder , t_shirt_builder.RIGHT_SHOULDER_PT.border_contour_index + 1)
-    RIGHT_WAIST_CORNER_PT(predictions,  t_shirt_builder , t_shirt_builder.RIGHT_CHEST_CORNER_PT.border_contour_index + 1)
-    chest_length = (t_shirt_builder.RIGHT_CHEST_CORNER_PT.coordinates[0] - t_shirt_builder.LEFT_CHEST_CORNER_PT.coordinates[0])/1
+    RIGHT_CHEST_CORNER_PT(predictions, t_shirt_builder, t_shirt_builder.RIGHT_SHOULDER_PT.border_contour_index + 1)
+    RIGHT_WAIST_CORNER_PT(predictions, t_shirt_builder, t_shirt_builder.RIGHT_CHEST_CORNER_PT.border_contour_index + 1)
+    chest_length = (t_shirt_builder.RIGHT_CHEST_CORNER_PT.coordinates[0] -
+                    t_shirt_builder.LEFT_CHEST_CORNER_PT.coordinates[0]) / 1
 
-    print("chest length: " + str(chest_length) )
+    print("chest length: " + str(chest_length))
     shoulder_length = (t_shirt_builder.RIGHT_SHOULDER_PT.coordinates[0] - \
-                   t_shirt_builder.LEFT_SHOULDER_PT.coordinates[0])/1
+                       t_shirt_builder.LEFT_SHOULDER_PT.coordinates[0]) / 1
     print("shoulder length: " + str(shoulder_length))
-    t_shirt_contour = t_shirt_contour.reshape(t_shirt_contour.shape[0],2).tolist()
+    t_shirt_contour = t_shirt_contour.reshape(t_shirt_contour.shape[0], 2).tolist()
     coords_left = t_shirt_contour[0:t_shirt_builder.LEFT_WAIST_CORNER_PT.border_contour_index]
     coords_right = t_shirt_contour[t_shirt_builder.RIGHT_WAIST_CORNER_PT.border_contour_index: len(t_shirt_contour) - 1]
     if t_shirt_builder.LEFT_WAIST_CORNER_PT.border_contour_index < t_shirt_builder.RIGHT_WAIST_CORNER_PT.border_contour_index:
@@ -110,32 +114,14 @@ def build_t_shirt_key_points(predictions):
     else:
         coords = coords_left
 
-
     y_coords = [coord[1] for coord in coords]
     average_y_waist = sum(y_coords) / len(y_coords)
     y_neck = t_shirt_builder.LEFT_COLLAR_PT.coordinates[1]
-    plt.scatter(int(t_shirt_class.corner_coordinate.top_coordinate[0]), int(t_shirt_class.corner_coordinate.top_coordinate[1]), c='black',
-               marker='o', s=100, label='Changed Point')
+    plt.scatter(int(t_shirt_class.corner_coordinate.top_coordinate[0]),
+                int(t_shirt_class.corner_coordinate.top_coordinate[1]), c='black',
+                marker='o', s=100, label='Changed Point')
     plt.savefig('sizing\scatter_plot.png')
 
-    tshirt_length = (average_y_waist - y_neck)/1
+    tshirt_length = (average_y_waist - y_neck) / 1
     print("tshirt length: " + str(tshirt_length))
-    return chest_length , shoulder_length, tshirt_length
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return chest_length, shoulder_length, tshirt_length

@@ -1,3 +1,4 @@
+import openai
 
 k = "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"
 from langchain.llms import OpenAI
@@ -224,9 +225,9 @@ def get_revised_prompt_template(conversation):
 # ----------------------------------------USING OPENAI DIRECTLY-----------------------------------------------------------
 
 
-def chatgpt_call(prompt, model="gpt-3.5-turbo"):
-    openai_llm.api_key = k
-    response = openai_llm.ChatCompletion.create(
+def chatgpt_call(prompt, model="text-davinci-003"):
+    openai.api_key = k
+    response = openai.ChatCompletion.create(
         model=model,
         messages=[{"role": "user", "content": prompt}]
     )
