@@ -224,6 +224,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     i = i + 1
                     message(response, key=i.__str__())
                     st.session_state["chat_messages"].append({"is_user": False, "message": response})
+                    st.session_state.issue_category = ""
 
 
 
@@ -279,6 +280,7 @@ def run_change_detector(generated_response):
             st.session_state.issue_category = 'quality'
             print("Session State: " + str(st.session_state.issue_category))
         return generated_response
+    st.session_state.issue_category = ""
     return generated_response
 
 
