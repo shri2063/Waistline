@@ -460,3 +460,13 @@ if download_images:
         zip_b64 = base64.b64encode(zip_contents).decode()
         href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
         st.markdown(href, unsafe_allow_html=True)
+
+st.markdown(""" 
+        <script>
+            document.querySelector('.element-to-scroll-to').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'end',
+                inline: 'nearest'
+            });
+        </script>
+    """, unsafe_allow_html=True)
