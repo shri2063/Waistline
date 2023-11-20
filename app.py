@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.8")
+st.header("WaistLyne v1.9")
 # st.session_state.widget = ''
 i = 45
 
@@ -76,7 +76,9 @@ if st.session_state["chat_messages"]:
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
 if st.button("Open url in new tab"):
-    webbrowser.open_new_tab("https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq")
+    st.markdown(f'<a href="https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzS" target="_blank">Click here to open the URL in a new tab</a>',
+                unsafe_allow_html=True)
+    #webbrowser.open_new_tab("https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq")
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
