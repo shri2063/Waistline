@@ -300,12 +300,12 @@ def run_change_detector(cust_query, generated_response):
             return ("I am really sorry. I understand you have issue in sizing related to tshirt."
                     "But I am not able to clearly understand the exact issue. If you don't mind can you"
                     "explain a little more in detail")
-        elif category == "Category B":
-            st.session_state.issue_category = ''
+        #elif category == "Category B":
+            #st.session_state.issue_category = ''
 
-            return ("I am really sorry. I understand you have issue in sizing related to tshirt."
-                    "But currently I am not able to measure sleeves and neck length. hence, i won't be able to solve your query. Hopefully, soon i will "
-                    "be able to measure the same")
+           # return ("I am really sorry. I understand you have issue in sizing related to tshirt."
+                   # "But currently I am not able to measure sleeves and neck length. hence, i won't be able to solve your query. Hopefully, soon i will "
+                    #"be able to measure the same")
         else:
 
             return generated_response + (". To provide additional assistance, please take a photo of "
