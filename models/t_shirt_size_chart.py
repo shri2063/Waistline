@@ -10,12 +10,12 @@ t_shirt_size_chart_ratio = {
 }
 
 t_shirt_size_chart_length = {
-    'XS': {'chest': (44.5, 47), 'shoulder': (39.5, 42), 'tshirt': (62.2, 67.3)},
-    'S': {'chest': (47, 49.5), 'shoulder': (40.5, 43), 'tshirt': (64.8, 69.9)},
-    'M': {'chest': (49.5, 52), 'shoulder': (42, 44.5), 'tshirt': (67.3, 72.4)},
-    'L': {'chest': (52, 54.5), 'shoulder': (43, 45.5), 'tshirt': (69.9, 74.9)},
-    'XL': {'chest': (54.5, 57), 'shoulder': (44.5, 48), 'tshirt': (72.4, 77.5)},
-    '2XL': {'chest': (57, 59.5), 'shoulder': (45.5, 49.5), 'tshirt': (74.9, 80)},
-    '3XL': {'chest': (59.5, 62), 'shoulder': (47, 50.5), 'tshirt': (77.5, 82.6)},
-    '4XL': {'chest': (62.5, 65), 'shoulder': (48.5, 52), 'tshirt': (80, 85.1)},
+    'XS': {'chest': (43.5, 48), 'shoulder': (39.5, 42), 'tshirt': (62.2, 67.3)},
+    'S': {'chest': (46, 49.5), 'shoulder': (40.5, 41.5), 'tshirt': (64.8, 69.9)},
+    'M': {'chest': (47.5, 52.5), 'shoulder': (41, 44.5), 'tshirt': (67.3, 72.4)},
+    'L': {'chest': (51, 55.5), 'shoulder': (43, 46.5), 'tshirt': (69.9, 74.9)},
+    'XL': {'chest': (53.5, 59), 'shoulder': (45.5, 51.05), 'tshirt': (72.4, 77.5)},
+    '2XL': {'chest': (56, 61), 'shoulder': (46.5, 52.5), 'tshirt': (74.9, 80)},
+    '3XL': {'chest': (59, 63), 'shoulder': (47, 53.5), 'tshirt': (77.5, 82.6)},
+    '4XL': {'chest': (62, 65), 'shoulder': (48.5, 54), 'tshirt': (80, 85.1)},
 }
