@@ -125,8 +125,12 @@ examples = [
         "answer": "Thanks . I understand that you find tshirt size incoorect, but can you exaplain in detail if tshirt size is smaller or larger than you expected"
     },
     {
-        "query": "In the tshirt I bought it feels tighter in the neck area. ",
-        "answer": "I understand you are finding that neck opening of tshirt is short. Noting down the Issue: Sizing:short neck opening"
+        "query": "I ordered tshirt of size M but received tshirt of Size L",
+        "answer": "I understand you are finding that neck opening of tshirt is short. Noting down the Issue: Sizing:tshirt is oversized"
+    },
+    {
+        "query": "I ordered tshirt of size L but received tshirt of Size S",
+        "answer": "I understand you are finding that neck opening of tshirt is short. Noting down the Issue: Sizing:tshirt is undersized"
     },
     {
 
@@ -177,32 +181,34 @@ AI: """
 
 
 # now create the few shot prompt template
-ai_introduction = "Greetings, I'm Rachel, and I'm delighted to welcome you to Waist Lyne. This serves as our MVP concept, showcasing how AI can assist " \
-                  "buyers in addressing sizing or quality concerns, mirroring the support provided by a customer associate. At present, I'm equipped to " \
-                  "recognize defects exclusively in T-shirts. Feel free to upload an image of a " \
-                  "T-shirt with any defects or incorrect sizing, or alternatively, you can choose to download one from our catalog of T-shirt images. "
+ai_introduction = "Hi, welcome to WaistLyne. This serves as our MVP concept, showcasing how AI can assist " \
+                  "buyers in addressing sizing or quality concerns At present, I'm equipped to " \
+                  "recognize Sizing and Quality defects exclusively in T-shirts.Can you imagine a scenerio where you bought a" \
+                  " tshirt from an e-commerce site and now are finding some issue into or alternatively," \
+                  " you can download a tshirt with specific issue from our catalogue available and let's start a conversation!!! "
 
 messages = [
     {'role': 'system', 'content': 'The following are exerpts from conversations with an AI assistant.  Company name is Waistlyne and your name is Rachel. This platform is basically MVP concept, showcasing how AI can assist buyers in addressing sizing or quality concerns, mirroring the  support provided by a customer associate. At present, '
                                   'AI is equipped to recognize defects exclusively in T-shirts. User is facing some problem in garments it has bought from the e-commerce store. AI is basically chat support of the '
-                                  'e-commerce company who istrying to identify exact issue face by the problem'}]
+                                  'e-commerce company who is trying to identify exact issue face by the problem'}]
 
 def run_llm(query, conversation_list):
     result_string = prefix + ""
-    x = []
+    customized_examples = []
     for example in examples:
         result_string += f"Query: {example['query']}\nAnswer: {example['answer']}\n\n"
-        x.append(example)
+        customized_examples.append(example)
     if conversation_list is not  None:
-        for conversation in conversation_list:
-            result_string += f"Query: {conversation['query']}\nAnswer: {conversation['answer']}\n\n"
-            x.append(conversation)
+        for index, conversation in enumerate(conversation_list):
+            if index == len(conversation) - 1:
+                result_string += f"Query: {conversation['query']}\nAnswer: {conversation['answer']}\n\n"
+                customized_examples.append(conversation)
 
 
     list = encoding.encode(result_string)
     print(len(list))
 
-    answer = openai_llm(get_revised_prompt_template(x).format(query=query))
+    answer = openai_llm(get_revised_prompt_template(customized_examples).format(query=query))
     #print(examples)
     messages.append({'role': 'user', 'content': f"{query}"})
     messages.append({'role': 'assistant',
