@@ -76,7 +76,7 @@ if st.session_state["chat_messages"]:
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
 if st.button("Open url in new tab"):
-    st.markdown(f'<a href="https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzS" target="_blank">Click here to open the URL in a new tab</a>',
+    st.markdown(f'<a href="https://drive.google.com/drive/folders/1JJlNkktQzv4upA_dUddWtLK3lib8yU0C?usp=drive_link" target="_blank">Click here to open the URL in a new tab</a>',
                 unsafe_allow_html=True)
     #webbrowser.open_new_tab("https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq")
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
