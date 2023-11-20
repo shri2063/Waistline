@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.7")
+st.header("WaistLyne v1.8")
 # st.session_state.widget = ''
 i = 45
 
@@ -202,11 +202,12 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                 with  ZipFile("sizing/tmp.zip", "r") as zip_ref:
                     zip_ref.extractall("sizing/predict")
                     st.success("Folder uploaded and extracted successfully")
-                    directory = "sizing/predict/images"
-                    image_files = [f for f in os.listdir(directory)]
+                    subdirectories = [d for d in os.listdir("sizing/predict") if os.path.isdir(os.path.join("sizing/predict", d))]
+
+                    image_files = [f for f in os.listdir(os.path.join("sizing/predict", subdirectories[0]))]
                     for image_file in image_files:
                         print(image_file)
-                        predictions = model_json_prediction_for_sizing_issue(os.path.join(directory, image_file))
+                        predictions = model_json_prediction_for_sizing_issue(os.path.join("sizing/predict", subdirectories[0], image_file))
                         predictions = get_corner_coordinates_for_tshirt(predictions)
                         corrected_predictions = correct_class_for_sleeves(predictions)
 
