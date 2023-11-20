@@ -1,5 +1,5 @@
 import base64
-
+import webbrowser
 import streamlit as st
 import numpy as np
 from streamlit_cropper import st_cropper
@@ -75,6 +75,8 @@ if st.session_state["chat_messages"]:
 
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
+if st.button("Open url in new tab"):
+    webbrowser.open_new_tab("https://drive.google.com/drive/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq")
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
