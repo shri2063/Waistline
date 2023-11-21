@@ -181,11 +181,17 @@ AI: """
 
 
 # now create the few shot prompt template
-ai_introduction = "Hi, welcome to Waistline. This serves as our MVP concept, showcasing how AI can assist " \
-                  "buyers in addressing sizing or quality concerns At present, I'm equipped to " \
-                  "recognize Sizing and Quality defects exclusively in T-shirts.Can you imagine a scenerio where you bought a" \
-                  " tshirt from an e-commerce site and now are finding some issue into or alternatively," \
-                  " you can download a tshirt with specific issue from our catalogue available and let's start a conversation!!! "
+ai_introduction = "Hello, welcome to Waistline! This platform serves as our Minimum Viable Product (MVP) concept, demonstrating how AI can " \
+                  "assist buyers in addressing sizing or quality concerns. Currently, I am specifically designed to identify sizing and quality" \
+                  " defects in T-shirts. Can you recall a scenario where you purchased a T-shirt from an e-commerce site and were then " \
+                  "encountering size or quality-related issues? You don't actually need to have the T-shirt on hand; I will guide you " \
+                  "through the process. Let's begin the conversation!"
+
+
+
+
+
+
 
 messages = [
     {'role': 'system', 'content': 'The following are exerpts from conversations with an AI assistant.  Company name is Waistlyne and your name is Rachel. This platform is basically MVP concept, showcasing how AI can assist buyers in addressing sizing or quality concerns, mirroring the  support provided by a customer associate. At present, '

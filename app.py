@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("Waistline v1.10")
+st.header("Waistline v1.11")
 # st.session_state.widget = ''
 i = 45
 
@@ -47,12 +47,12 @@ img_file = None
 # Upload an image and set some options for demo purposes
 
 # img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
-img_folder = st.sidebar.file_uploader(label="Upload image collection for sizing", type="zip", key="zipfile")
-model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
-defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
-selected_folder = st.sidebar.selectbox("Select a folder: ", ["clean_tshirts", "black_tshirt", "green_tshirt"])
-check_images = st.sidebar.button(label="Check Images")
-download_images = st.sidebar.button(label="Download Images")
+#img_folder = st.sidebar.file_uploader(label="Upload image collection for sizing", type="zip", key="zipfile")
+#model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
+#defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
+#selected_folder = st.sidebar.selectbox("Select a folder: ", ["clean_tshirts", "black_tshirt", "green_tshirt"])
+#heck_images = st.sidebar.button(label="Check Images")
+#ownload_images = st.sidebar.button(label="Download Images")
 # Initial Message
 message(ai_introduction, key=i.__str__())
 
@@ -207,7 +207,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
         if sizing_folder is None:
             st.write("Please upload zip folder with images of tshirt as described above")
         else:
-            st.write("We are working on our request. Please wait")
+            st.write("We are working on our request. Please wait, it might take 2 to 3 minutes based upon size of folder")
             with open("sizing/tmp.zip", "wb") as f:
                 if os.path.exists("sizing/predict"):
                     shutil.rmtree("sizing/predict")
@@ -464,45 +464,45 @@ def fetch_conversation_till_now():
 
 
 
-
-if img_folder:
-    with open("predict/tmp.zip", "wb") as f:
-        f.write(img_folder.read())
-    # Extract all contents of zip folder to a temporary folder
-    with  ZipFile("temp.zip", "r") as zip_ref:
-        zip_ref.extractall("predict")
-    st.success("Folder uploaded and extracted successfully")
-
-IMAGE_CHECKED = False
-if check_images:
-    # Display the list of clean_tshirts in the uploaded folder
-    print(selected_folder)
-    directory = "samples/" + selected_folder
-    image_files = [f for f in os.listdir(directory)]
-    for image_file in image_files:
-        image_path = os.path.join(directory, image_file)
-        image = Image.open(image_path)
-        st.image(image, use_column_width=True)
-    IMAGE_CHECKED = True
-    # st.write("List of clean_tshirts in  the uploaded folder:")
-    # print(image_files)
-    # st.write(image_files[0])
-
-if download_images:
-    directory = "samples/" + selected_folder
-    image_files = [f for f in os.listdir(directory)]
-    zip_file_name = f"{selected_folder}_images.zip"
-
-    with st.spinner(f"Creating {zip_file_name}.... "):
-        st.write("Downloading...")
-        with ZipFile(zip_file_name, 'w') as zipf:
-            for image_file in image_files:
-                image_path = os.path.join(directory, image_file)
-                zipf.write(image_path, os.path.basename(image_file))
-        with open(zip_file_name, "rb") as f:
-            zip_contents = f.read()
-
-        # Encode the zip file as base64
-        zip_b64 = base64.b64encode(zip_contents).decode()
-        href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
-        st.markdown(href, unsafe_allow_html=True)
+#
+# if img_folder:
+#     with open("predict/tmp.zip", "wb") as f:
+#         f.write(img_folder.read())
+#     # Extract all contents of zip folder to a temporary folder
+#     with  ZipFile("temp.zip", "r") as zip_ref:
+#         zip_ref.extractall("predict")
+#     st.success("Folder uploaded and extracted successfully")
+#
+# IMAGE_CHECKED = False
+# if check_images:
+#     # Display the list of clean_tshirts in the uploaded folder
+#     print(selected_folder)
+#     directory = "samples/" + selected_folder
+#     image_files = [f for f in os.listdir(directory)]
+#     for image_file in image_files:
+#         image_path = os.path.join(directory, image_file)
+#         image = Image.open(image_path)
+#         st.image(image, use_column_width=True)
+#     IMAGE_CHECKED = True
+#     # st.write("List of clean_tshirts in  the uploaded folder:")
+#     # print(image_files)
+#     # st.write(image_files[0])
+#
+# if download_images:
+#     directory = "samples/" + selected_folder
+#     image_files = [f for f in os.listdir(directory)]
+#     zip_file_name = f"{selected_folder}_images.zip"
+#
+#     with st.spinner(f"Creating {zip_file_name}.... "):
+#         st.write("Downloading...")
+#         with ZipFile(zip_file_name, 'w') as zipf:
+#             for image_file in image_files:
+#                 image_path = os.path.join(directory, image_file)
+#                 zipf.write(image_path, os.path.basename(image_file))
+#         with open(zip_file_name, "rb") as f:
+#             zip_contents = f.read()
+#
+#         # Encode the zip file as base64
+#         zip_b64 = base64.b64encode(zip_contents).decode()
+#         href = f'<a href="data:application/zip;base64,{zip_b64}" download="{zip_file_name}">Click here to download</a>'
+#         st.markdown(href, unsafe_allow_html=True)
