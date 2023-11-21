@@ -76,8 +76,15 @@ if st.session_state["chat_messages"]:
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
+    st.write("below tshirt image is just for demonstration how to capture image")
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
+    st.write("For this demonstration, if you don't have a relevant T-shirt, feel free to download any suitable T-shirt with your expected size "
+             "by clicking the link below. Afterward, please upload the chosen image to continue with the conversation.")
+    if st.button("Check Tshirt with sizes"):
+        st.markdown(
+            f'<a href="https://drive.google.com/drive/u/0/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq">Click here to open the URL in a new tab</a>',
+            unsafe_allow_html=True)
     sizing_img = st.file_uploader(label='Upload Image of your tshirt', type=['png', 'jpg'], key="img_file")
     st.session_state.t_shirt_size = st.text_input("Please enter size  of your tshirt in Capital. Example: L")
 
@@ -183,8 +190,15 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
 print("sizing_fist_ref", st.session_state.sizing_fist_ref)
 
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == True:
-    sample_image = Image.open("sizing/sample_sizing_img_w_mobile.jpeg")
-    st.image(sample_image, caption="Sample Image", width=300)
+    #st.write("below tshirt image is just for demonstration how to capture image")
+    #sample_image = Image.open("sizing/sample_sizing_img_w_mobile.jpeg")
+    #st.image(sample_image, caption="Sample Image", width=300)
+    st.write("For this demonstration, in case you don't have the relevant folder, you can download a zip folder containing any "
+             "T-shirt with the expected size by clicking the link below. Kindly upload the selected image to continue with the conversation.")
+    if st.button("Check Tshirts Zip folder"):
+        st.markdown(
+            f'<a href="https://drive.google.com/drive/u/0/folders/1aZ6fcShbc9pwZimKK1ndX9q5pitOKzSq">Click here to open the URL in a new tab</a>',
+            unsafe_allow_html=True)
     sizing_folder = st.file_uploader(label="Upload images zip  for sizing", type="zip", key="zipfile1")
     CHEST = []
     SHOULDER = []
@@ -267,7 +281,13 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     st.session_state.issue_category = ""
 
 if st.session_state.issue_category == 'quality':
+    st.write("As this is a demonstration, if you don't have relevent image feel free to download either a defective or non-defective image by clicking the link below. "
+             "Please upload the chosen image to proceed with the conversation")
+    if st.button("Check Tshirt Quality images"):
+        st.markdown(f'<a href="https://drive.google.com/drive/u/0/folders/1OevGAFBiEe6xRD_WUF_ur5Q_tUYlzNzh" target="_blank">Click here to open the URL in a new tab</a>',
+                    unsafe_allow_html=True)
     img_file = st.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
+
     if img_file is not None:
         img = Image.open(img_file)
         img = ImageOps.exif_transpose(img)
@@ -394,10 +414,7 @@ def run_change_detector(cust_query, generated_response):
                                          "the T-shirt and enter its size in the input box below. "
                                          "Ensure that you turn the T-shirt inside out and hold "
                                          "your phone over the top of the T-shirt, similar t"
-                                         "o the example image attached. If you don't have "
-                                         "a T-shirt available, you can select a relevant "
-                                         "T-shirt with an issue from our gallery,"
-                                         " as this is a demonstration.")
+                                         "o the example image attached.")
 
     elif "Quality:" in str(generated_response):
         st.session_state.issue_category = 'quality'
@@ -409,7 +426,7 @@ def run_change_detector(cust_query, generated_response):
                     "If the quality issue pertains to stains, holes, or similar issues, I am more than willing to assist in resolving it.")
         else:
             return generated_response + (". To provide additional assistance, please take a closer photo of concerned portion of the tshirt. "
-                                         "Please ensure that concerned part is clearly visible")
+                                         "Please ensure that concerned part is clearly visible.")
 
 
         return generated_response
