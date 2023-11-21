@@ -18,7 +18,7 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 from zipfile import ZipFile
 from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
-    get_iou_input_and_iou_predicted, yolo_chirag
+    get_iou_input_and_iou_predicted, yolo_chirag, yolo_venkatesh
 
 st.header("Waistline v1.11")
 # st.session_state.widget = ''
@@ -48,7 +48,7 @@ img_file = None
 
 # img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
 #img_folder = st.sidebar.file_uploader(label="Upload image collection for sizing", type="zip", key="zipfile")
-#model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
+model = st.sidebar.radio(label="Select Model", options=["blue", "green"], key="model")
 #defect = st.sidebar.radio(label="Select defect", options=["quality", "sizing"], key="defect")
 #selected_folder = st.sidebar.selectbox("Select a folder: ", ["clean_tshirts", "black_tshirt", "green_tshirt"])
 #heck_images = st.sidebar.button(label="Check Images")
@@ -76,7 +76,7 @@ if st.session_state["chat_messages"]:
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
-    st.write("below tshirt image is just for demonstration how to capture image")
+    st.write("Below tshirt image is just for demonstration how to capture image")
     sample_image = Image.open("sizing/sample_sizing_image.jpg")
     st.image(sample_image, caption="Sample Image", width=300)
     st.write("For this demonstration, if you don't have a relevant T-shirt, feel free to download any suitable T-shirt with your expected size "
@@ -293,14 +293,14 @@ if st.session_state.issue_category == 'quality':
         img = ImageOps.exif_transpose(img)
         width, height = img.size
 
-        if width > 200.0:
-            new_height = height / width * 200.0
-            new_width = 200.0
+        if width > 700.0:
+            new_height = height / width * 700.0
+            new_width = 700.0
             img = img.resize((int(new_width), int(new_height)))
 
-        elif height > 200.0:
-            new_width = width / height * 200.0
-            new_height = 200.0
+        elif height > 700.0:
+            new_width = width / height * 700.0
+            new_height = 700.0
             img = img.resize((int(new_width), int(new_height)))
 
         rect = st_cropper(
@@ -328,8 +328,8 @@ if st.session_state.issue_category == 'quality':
                 height=height)
             bgr_image = img.convert("RGB")
             bgr_image.save("quality/quality_img.jpg")
-            model = yolo_chirag()
-            iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+            model = yolo_venkatesh()
+            iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box,10)
             result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
             i = i + 1
             message(generated_response, key=i.__str__())
@@ -346,24 +346,35 @@ if st.session_state.issue_category == 'quality':
         bgr_image = img.convert("RGB")
         bgr_image.save("quality/quality_img.jpg")
         model = yolo_chirag()
-        iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+        iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box,10)
         result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
-        if result == True:
+        if result:
             generated_response = "Apologies for my earlier reply. " + generated_response
             i = i + 1
             message(generated_response, key=i.__str__())
+        if not result:
+            iou_input, iou_predicted = get_iou_input_and_iou_predicted(yolo_venkatesh(), input_box, 5)
+            result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
+            if result:
+                generated_response = "Apologies for my earlier reply. " + generated_response
+                i = i + 1
+                message(generated_response, key=i.__str__())
+            else:
+                i = i + 1
+                message(generated_response, key=i.__str__())
+
 
     if st.button('Check result'):
         if model == "blue":
-            model = yolo_chirag()
+            model = yolo_venkatesh()
         else:
             model = yolo_chirag()
 
-            st.write('We are working on your query. Please wait.')
-            predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
-            predicted_image = Image.open(predicted_image_file)
-            predicted_image = np.asarray(predicted_image).astype('uint8')
-            st.image(Image.fromarray(predicted_image), caption='Predicted Image')
+        st.write('We are working on your query. Please wait.')
+        predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
+        predicted_image = Image.open(predicted_image_file)
+        predicted_image = np.asarray(predicted_image).astype('uint8')
+        st.image(Image.fromarray(predicted_image), caption='Predicted Image',   width = 300 )
 
 
 

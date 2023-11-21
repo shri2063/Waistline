@@ -10,6 +10,12 @@ def yolo_chirag():
     project = rf.workspace("chirag-s3e7s").project("tshirt-evfwv")
     return project.version(4).model
 
+def yolo_venkatesh():
+    rf = Roboflow(api_key="DQ9wqnpIdZMAPHBHp6qt")
+    project = rf.workspace("venkatesh-nbix7").project("t-shirt-with-defect")
+    return project.version(1).model
+
+
 
 
 
@@ -28,7 +34,7 @@ def yolo_chirag():
 
 
 def model_img_prediction(model, filename: str) -> str:
-    model.predict(filename, confidence=4, overlap=30).save("quality/predict.jpg")
+    model.predict(filename, confidence=10, overlap=30).save("quality/predict.jpg")
     return "quality/predict.jpg"
 
 
@@ -37,8 +43,8 @@ def model_img_prediction(model, filename: str) -> str:
 
 
 
-def model_json_prediction(model, filename: str) -> list[Box]:
-    model_prediction = model.predict(filename, confidence=4, overlap=30).json()
+def model_json_prediction(model, filename: str, confidence) -> list[Box]:
+    model_prediction = model.predict(filename, confidence=confidence, overlap=30).json()
     print(model_prediction)
 
     #predictions_data = PredictionsData(predictions=[])
@@ -84,23 +90,31 @@ def calculate_iou(input_box: Box, predicted_box: Box):
 
 
 def generate_response_based_upon_result(iou_input: float, iou_predicted: float) :
-    if iou_input > 0.15 and iou_predicted > 0.15:
-        return True, "I can clearly see that there is a defect in the form of stain in the area you have highlighted. " \
-                     "I have accepted your request and necessary actions will be taken"
-    elif iou_input < 0.15 and iou_predicted > 0.15:
-        return False, "Sorry! I am not able to detect defect in the area you have selected. I think the area you have selected is quite broad. " \
-                      " Can you please reduce the area selected and  make it focus  precisely cover only the affected part"
-    elif iou_input > 0.15 and iou_predicted < 0.15:
-        return False, "Sorry! I am not able to detect defect in the area you have selected. I think the area you have selected is quite narrow. " \
-                      " Can you please increase  the area selected and make it focus  precisely cover only the affected part"
-    elif iou_input < 0.15 and iou_predicted < 0.15:
-        return False, "Sorry! I am not able to detect defect in the area you have selected. " \
-                      " Can you please readjust  the area selected and make it focus  precisely cover only the affected part"
 
-def get_iou_input_and_iou_predicted(model, input_box) :
+    if iou_input > 0.15 and iou_predicted > 0.15:
+        return True, "I can clearly see that there is a defect in the area you have highlighted. " \
+                     "I will accept your request"
+    elif iou_input < 0.15 and iou_predicted > 0.15:
+        return False, "I apologize, but I'm unable to detect a defect in the area you've chosen. It seems that the selected area is quite extensive. " \
+                      "Could you please narrow down the selected area to precisely cover only the affected part? Alternatively, " \
+                      "you can take another image focused on the specific area of concern, using a camera flash for better clarity."
+    elif iou_input > 0.15 and iou_predicted < 0.15:
+        return False, "I apologize, but I'm unable to detect a defect in the area you've chosen. It appears that the selected area is too narrow. " \
+                      "Could you please increase the selected area, ensuring it precisely covers only the affected part? " \
+                      "This adjustment will help in a more accurate assessment." \
+                      " Alternatively, you can take another image focused on the specific area of concern, using a camera flash for better clarity."
+    elif iou_input < 0.15 and iou_predicted < 0.15:
+
+        return False, "I apologize, but I couldn't detect a defect in the area you selected. " \
+                      "Please click on Retry if you want me try one more time. " \
+                      "Alternatively, could you please readjust the selected area, " \
+                      "ensuring it focuses precisely on the affected part? This adjustment will assist in a more accurate analysis." \
+                      " Additionally, you can take another image focused on the specific area of concern, using a camera flash for better clarity."
+
+def get_iou_input_and_iou_predicted(model, input_box,confidence ) :
     f_iou_input = 0.0
     f_iou_predicted = 0.0
-    box_objects: list[Box] = model_json_prediction(model, "quality/quality_img.jpg")
+    box_objects: list[Box] = model_json_prediction(model, "quality/quality_img.jpg", confidence)
     for predicted_box in box_objects:
         print(
             f"predicted box x: {predicted_box.x}, y: {predicted_box.y}, width: {predicted_box.width}, height: {predicted_box.height}")
