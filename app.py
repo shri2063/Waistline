@@ -20,7 +20,7 @@ from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_c
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
     get_iou_input_and_iou_predicted, yolo_chirag
 
-st.header("WaistLyne v1.8")
+st.header("Waistline v1.9")
 # st.session_state.widget = ''
 i = 45
 
@@ -266,6 +266,87 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     st.session_state["chat_messages"].append({"is_user": False, "message": response})
                     st.session_state.issue_category = ""
 
+if st.session_state.issue_category == 'quality':
+    img_file = st.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
+    if img_file is not None:
+        img = Image.open(img_file)
+        img = ImageOps.exif_transpose(img)
+        width, height = img.size
+
+        if width > 200.0:
+            new_height = height / width * 200.0
+            new_width = 200.0
+            img = img.resize((int(new_width), int(new_height)))
+
+        elif height > 200.0:
+            new_width = width / height * 200.0
+            new_height = 200.0
+            img = img.resize((int(new_width), int(new_height)))
+
+        rect = st_cropper(
+            img,
+            realtime_update=True,
+            box_color="yellow",
+            aspect_ratio=(1, 1),
+            return_type="box",
+            stroke_width=2
+        )
+    if st.button('Submit Image'):
+        if img_file is None:
+            st.write("Please upload image of tshirt as described above")
+        else:
+
+
+            print("Session State: " + str(st.session_state))
+            st.write('We are working on your query. Please wait.')
+
+            left, top, width, height = tuple(map(int, rect.values()))
+            input_box = Box(
+                x=left,
+                y=top,
+                width=width,
+                height=height)
+            bgr_image = img.convert("RGB")
+            bgr_image.save("quality/quality_img.jpg")
+            model = yolo_chirag()
+            iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+            result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
+            i = i + 1
+            message(generated_response, key=i.__str__())
+
+    if st.button('Retry'):
+        st.write('We are working on your query. Please wait.')
+        left, top, width, height = tuple(map(int, rect.values()))
+        input_box = Box(
+                    x=left,
+                    y=top,
+                    width=width,
+                    height=height
+                )
+        bgr_image = img.convert("RGB")
+        bgr_image.save("quality/quality_img.jpg")
+        model = yolo_chirag()
+        iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
+        result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
+        if result == True:
+            generated_response = "Apologies for my earlier reply. " + generated_response
+            i = i + 1
+            message(generated_response, key=i.__str__())
+
+    if st.button('Check result'):
+        if model == "blue":
+            model = yolo_chirag()
+        else:
+            model = yolo_chirag()
+
+            st.write('We are working on your query. Please wait.')
+            predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
+            predicted_image = Image.open(predicted_image_file)
+            predicted_image = np.asarray(predicted_image).astype('uint8')
+            st.image(Image.fromarray(predicted_image), caption='Predicted Image')
+
+
+
 
 def submit(elseif=None):
     with st.spinner("Generating response...."):
@@ -321,6 +402,16 @@ def run_change_detector(cust_query, generated_response):
     elif "Quality:" in str(generated_response):
         st.session_state.issue_category = 'quality'
         print("Session State: " + str(st.session_state.issue_category))
+        if "mismatch" in str(generated_response):
+            st.session_state.issue_category = ""
+            return ("I sincerely apologize for the inconvenience. I acknowledge that there is a quality mismatch issue with the T-shirt."
+                    " However, at the moment, I am unable to address any quality mismatch concerns as I do not have access to the original images of the T-shirt. "
+                    "If the quality issue pertains to stains, holes, or similar issues, I am more than willing to assist in resolving it.")
+        else:
+            return generated_response + (". To provide additional assistance, please take a closer photo of concerned portion of the tshirt. "
+                                         "Please ensure that concerned part is clearly visible")
+
+
         return generated_response
     else:
         st.session_state.issue_category = ""
@@ -353,118 +444,9 @@ def fetch_conversation_till_now():
         return conversation
 
 
-if img_file is not None:
 
-    img = Image.open(img_file)
-    img = ImageOps.exif_transpose(img)
-    width, height = img.size
 
-    if width > 200.0:
-        new_height = height / width * 200.0
-        new_width = 200.0
-        img = img.resize((int(new_width), int(new_height)))
 
-    elif height > 200.0:
-        new_width = width / height * 200.0
-        new_height = 200.0
-        img = img.resize((int(new_width), int(new_height)))
-
-    rect = st_cropper(
-        img,
-        realtime_update=True,
-        box_color="yellow",
-        aspect_ratio=(1, 1),
-        return_type="box",
-        stroke_width=2
-    )
-    CHEST = []
-    SHOULDER = []
-    TSHIRT = []
-
-    if st.button('Submit'):
-
-        if st.session_state.issue_category == "sizing":
-            directory = "predict/images"
-            image_files = [f for f in os.listdir(directory)]
-            for image_file in image_files:
-                print(image_file)
-                # img = Image.open(os.path.join(directory, image_file))
-                # raw_image = np.asarray(img).astype('uint8')
-                # bgr_image = cv2.cvtColor(raw_image, cv2.COLOR_RGB2BGR)
-                # cv2.imwrite('sizing_img.jpg', bgr_image)
-                predictions = model_json_prediction_for_sizing_issue(os.path.join(directory, image_file))
-                predictions = get_corner_coordinates_for_tshirt(predictions)
-                corrected_predictions = correct_class_for_sleeves(predictions)
-                # print("Corrected Predictions")
-                # print(corrected_predictions)
-                try:
-                    chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(corrected_predictions)
-                    CHEST.append(chest_length)
-                    SHOULDER.append(shoulder_length)
-                    TSHIRT.append(tshirt_length)
-                except Exception as e:
-                    print(e.__str__())
-
-            print(f"chest: " + str(sum(CHEST) / len(CHEST)))
-            print(f"shoulder: " + str(sum(SHOULDER) / len(SHOULDER)))
-            print(f"tshirt: " + str(sum(TSHIRT) / len(TSHIRT)))
-            st.write('chest: ' + str(sum(CHEST) / len(CHEST)) + 'shoulder: ' + str(
-                sum(SHOULDER) / len(SHOULDER)) + "tshirt: " + str(sum(TSHIRT) / len(TSHIRT)))
-
-        if st.session_state.issue_category == "quality":
-            print("Session State: " + str(st.session_state))
-            st.session_state["user_prompt_history"] = []
-            st.session_state["chat_answers_history"] = []
-            st.write('We are working on your query. Please wait.')
-
-            # raw_image = np.asarray(img).astype('uint8')
-            left, top, width, height = tuple(map(int, rect.values()))
-            input_box = Box(
-                x=left,
-                y=top,
-                width=width,
-                height=height
-            )
-            bgr_image = img.convert("RGB")
-            bgr_image.save("quality/quality_img.jpg")
-            model = yolo_chirag()
-            iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
-            result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
-            message(generated_response, key=i.__str__())
-
-    if st.button('Retry'):
-        st.session_state["user_prompt_history"] = []
-        st.session_state["chat_answers_history"] = []
-        st.write('We are working on your query. Please wait.')
-
-        raw_image = np.asarray(img).astype('uint8')
-        left, top, width, height = tuple(map(int, rect.values()))
-        input_box = Box(
-            x=left,
-            y=top,
-            width=width,
-            height=height
-        )
-        bgr_image = img.convert("RGB")
-        bgr_image.save("quality/quality_img.jpg")
-        model = yolo_chirag()
-        iou_input, iou_predicted = get_iou_input_and_iou_predicted(model, input_box)
-        result, generated_response = generate_response_based_upon_result(iou_input, iou_predicted)
-        if result == True:
-            generated_response = "Apologies for my earlier reply. " + generated_response
-        message(generated_response, key=i.__str__())
-
-    # if st.button('Check result'):
-    # if model == "blue":
-    # model = yolo_chirag()
-    # else:
-    # model = yolo_chirag()
-
-    st.write('We are working on your query. Please wait.')
-    predicted_image_file = model_img_prediction(model, "quality/quality_img.jpg")
-    predicted_image = Image.open(predicted_image_file)
-    predicted_image = np.asarray(predicted_image).astype('uint8')
-    st.image(Image.fromarray(predicted_image), caption='Predicted Image')
 
 if img_folder:
     with open("predict/tmp.zip", "wb") as f:

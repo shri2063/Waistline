@@ -181,7 +181,7 @@ AI: """
 
 
 # now create the few shot prompt template
-ai_introduction = "Hi, welcome to WaistLyne. This serves as our MVP concept, showcasing how AI can assist " \
+ai_introduction = "Hi, welcome to Waistline. This serves as our MVP concept, showcasing how AI can assist " \
                   "buyers in addressing sizing or quality concerns At present, I'm equipped to " \
                   "recognize Sizing and Quality defects exclusively in T-shirts.Can you imagine a scenerio where you bought a" \
                   " tshirt from an e-commerce site and now are finding some issue into or alternatively," \
