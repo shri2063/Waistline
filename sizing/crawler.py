@@ -9,8 +9,7 @@ from sizing.t_shirt_key_points.RIGHT_CHEST_CORNER_PT import RIGHT_CHEST_CORNER_P
 from sizing.t_shirt_key_points.RIGHT_SHOULDER_PT import RIGHT_SHOULDER_PT
 from sizing.t_shirt_key_points.RIGHT_WAIST_CORNER_PT import RIGHT_WAIST_CORNER_PT
 import  shutil
-MOBILE_LENGTH = 15.8
-MOBILE_WIDTH = 7.3
+
 
 
 def get_ratios_for_tshirt(predictions):
@@ -26,15 +25,30 @@ def get_ratios_for_tshirt(predictions):
 
 
 def get_actual_length_for_tshirt(predictions):
-    chest_length, shoulder_length, tshirt_length = build_t_shirt_key_points(predictions)
+    chest_pixcels, shoulder_pixcels, tshirt_pixcels = build_t_shirt_key_points(predictions)
 
-    p_x, p_y = get_pixel_count_for_one_cm(predictions)
+    #p_x, p_y = get_pixel_count_for_one_cm(predictions)
+    #p_x = 1
+    #p_y = 1
 
-    print("Chest:", chest_length / p_x * 0.97)
-    print("Shoulder:", shoulder_length / (p_x * 0.95))
-    print("Tshirt:", tshirt_length / p_y)
-    return (chest_length / (p_x * 0.97)
-            , shoulder_length / (p_x * 0.95), tshirt_length / p_y)
+    print("Chest:", chest_pixcels /  1.0)
+    print("Shoulder:", shoulder_pixcels / (1.0))
+    print("Tshirt:", tshirt_pixcels )
+    chest_length = round(2*0.97*(chest_pixcels/get_pixel_count_for_one_cm_at_3ft(chest_pixcels)),2)
+    shoulder_length = round(shoulder_pixcels / get_pixel_count_for_one_cm_at_3ft(shoulder_pixcels), 2)
+    tshirt_length = round(tshirt_pixcels / get_pixel_count_for_one_cm_at_3ft(tshirt_pixcels), 2)
+    return (chest_length
+            , shoulder_length , tshirt_length)
+
+def get_pixel_count_for_one_cm_at_3ft(pixcels):
+    if 150.0 <= pixcels < 250.0:
+        return  4.38*1.1
+    elif 250 <= pixcels < 300:
+        return 4.38*1.11
+    elif 300 <= pixcels < 350:
+        return 4.38*1.12
+    else:
+        return 4.38*1.13
 
 
 def get_pixel_count_for_one_cm(predictions):
@@ -73,11 +87,14 @@ def get_pixel_count_for_one_cm(predictions):
     print("Bot X:", bot_min_x, bot_max_x)
     print("Left Y:", left_min_y, left_max_y)
     print("Right Y:", right_min_y, right_max_y)
-    p_x = (((top_max_x - top_min_x) + (bot_max_x - bot_min_x)) / 2) / MOBILE_WIDTH
-    p_y = (((left_max_y - left_min_y) + (right_max_y - right_min_y)) / 2) / MOBILE_LENGTH
-    p_y = p_y * 0.95
+    p_x = (((top_max_x - top_min_x) + (bot_max_x - bot_min_x)) / 2)
+    print("p_x", p_x)
+    p_y = (((left_max_y - left_min_y) + (right_max_y - right_min_y)) / 2)
+    p_y = p_y * 1
+
+    print("p_y", p_y)
     if p_x > 1.2 * p_y:
-        p_x = 0.95 * p_x
+        p_x = 1 * p_x
     return p_x, p_y
 
 

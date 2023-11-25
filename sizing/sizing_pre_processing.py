@@ -104,19 +104,34 @@ def get_corner_coordinates_for_tshirt(predictions):
 
 def correct_class_for_sleeves(predictions):
     # Deep copy
-
+    #print(predictions)
     sleeve_predictions = [x for x in predictions if "sleeve" in x.class_]
+    tshirt_prediction = [x for x in predictions if "t_shirt" in x.class_][0]
+    #print("top cord", tshirt_prediction.corner_coordinate.top_coordinate)
     #print(sleeve_predictions)
     remove_predictions = []
 
-
-
-    for index, prediction in enumerate(sleeve_predictions):
-        sleeve_contour = []
+    WIDTH = []
+    for index, prediction in enumerate(predictions):
+        contour = []
+        feet_prediction = False
 
         for point in prediction.points:
-            sleeve_contour.append((point.x, point.y))
-        sleeve_coordinates = get_corner_coordinates_for_contour(sleeve_contour)
+            if point.y > tshirt_prediction.corner_coordinate.bottom_coordinate[1]:
+                #print("think there is")
+                remove_predictions.append(prediction)
+                feet_prediction = True
+                break
+
+            contour.append((point.x, point.y))
+        if feet_prediction:
+            #print("found one")
+            #feet_coordinates = get_corner_coordinates_for_contour(contour)
+            #width = (feet_coordinates.right_coordinate[1] - feet_coordinates.left_coordinate[1])
+            #print(width)
+            #WIDTH.append(width)
+            continue
+        sleeve_coordinates = get_corner_coordinates_for_contour(contour)
         #print("Corner Coordinates")
         #print(prediction)
         #print(sleeve_coordinates)
@@ -130,12 +145,16 @@ def correct_class_for_sleeves(predictions):
         #else:
           #  remove_predictions.append(prediction)
     sleeve_predictions_list = list(sleeve_predictions)
+    #print("sleeve_predictions_list", sleeve_predictions_list)
     for prediction in remove_predictions:
         sleeve_predictions_list.remove(prediction)
+    #print("sleeve_predictions_list", sleeve_predictions_list)
     left_sleeve = min(sleeve_predictions_list, key = lambda z : z.x)
     left_sleeve.class_ = "left_sleeve_verified"
     right_sleeve = max(sleeve_predictions_list, key=lambda z: z.x + z.width)
     right_sleeve.class_ = "right_sleeve_verified"
+    #feet_width = sum(WIDTH)/len(WIDTH)
+    #print("feet_width", feet_width)
 
     return predictions
 

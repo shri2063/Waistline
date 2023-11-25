@@ -15,6 +15,10 @@ def yolo_venkatesh():
     project = rf.workspace("venkatesh-nbix7").project("t-shirt-with-defect")
     return project.version(1).model
 
+def yolo_rahul():
+    rf = Roboflow(api_key="tltyisBDbiERQLoieJpR")
+    project = rf.workspace("rahul-3uiyz").project("t-shirt-defect-detection")
+    return project.version(1).model
 
 
 

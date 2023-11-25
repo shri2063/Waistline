@@ -29,7 +29,7 @@ class ImageData(BaseModel):
 
 def get_prediction_using_YOLO(filename: str):
     model = YOLO("trained_models/best_1.pt")
-    results = model.predict(source=filename, conf=0.1)
+    results = model.predict(source=filename, conf=0.3)
     masks = results[0].masks.cpu()
 
 
