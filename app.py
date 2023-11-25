@@ -122,7 +122,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
             x = Image.open('sizing/sizing_img.jpg')
             width, height = x.size
             ratio = height / width
-            st.write("ratio", ratio)
+            #st.write("ratio", ratio)
             width_list = [width, 450.0, 550.0, 650.0]
             context = ''
             for width in width_list:
