@@ -99,7 +99,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
         "by clicking the link below. Afterward, please upload the chosen image to continue with the conversation.")
     if st.button("Check Tshirt with sizes"):
         st.markdown(
-            f'<a href="https://drive.google.com/drive/folders/1cCB1LK94ELvz4CQfSifjlELKhJUZJBG6">Click here to open the URL in a new tab</a>',
+            f'<a href="https://drive.google.com/drive/folders/1aS2MKUiXdXOWOF_KAGoHb2zkifddQ4ah">Click here to open the URL in a new tab</a>',
             unsafe_allow_html=True)
     sizing_img = st.file_uploader(label='Upload Image of your tshirt', type=['png', 'jpg', 'zip'], key="img_file")
     st.session_state.t_shirt_size = st.text_input("Please enter size  of your tshirt in Capital. Example: L")
@@ -217,9 +217,6 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
             st.session_state["chat_messages"].append({"is_user": False, "message": response})
             message(response, key=i.__str__())
             #st.session_state.issue_category = ""
-        else:
-            st.write(
-                "I am really sorry! There seems some problem with above tshirt image. Can you please upload another image following above instruction")
 
     if st.button("Retry"):
         context = st.session_state.context
@@ -251,7 +248,7 @@ if st.session_state.issue_category == 'quality':
         "Please upload the chosen image to proceed with the conversation")
     if st.button("Check Tshirt Quality images"):
         st.markdown(
-            f'<a href="https://drive.google.com/drive/u/0/folders/1OevGAFBiEe6xRD_WUF_ur5Q_tUYlzNzh" target="_blank">Click here to open the URL in a new tab</a>',
+            f'<a href="https://drive.google.com/drive/folders/138eWBPMLCzJMWXpSEapQOwC_z6YPaG2A" target="_blank">Click here to open the URL in a new tab</a>',
             unsafe_allow_html=True)
     img_file = st.file_uploader(label='Upload a file', type=['png', 'jpg'], key="img_file")
 
