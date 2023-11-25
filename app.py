@@ -108,7 +108,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
         #st.write(sizing_img.type)
 
     if st.button('Submit Image'):
-        print(sizing_img)
+
         if st.session_state.t_shirt_size not in ('S', 'M', 'L', 'XL', 'XXL'):
             st.write("Tshirt size is not entered properly. Please select between S,M,L,XL,XXL")
         elif sizing_img is None:
@@ -122,7 +122,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
             x = Image.open('sizing/sizing_img.jpg')
             width, height = x.size
             ratio = height / width
-            print(ratio)
+            st.write("ratio", ratio)
             width_list = [width, 450.0, 550.0, 650.0]
             context = ''
             for width in width_list:
