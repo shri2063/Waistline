@@ -16,7 +16,7 @@ from sizing.sizing_response import  calculate_lengths_for_image, \
     get_context_based_upon_lengths
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
-st.set_option('deprecation.showfileUploaderEncoding', False)
+
 from zipfile import ZipFile
 from sizing.sizing_pre_processing import correct_class_for_sleeves, get_corner_coordinates_for_tshirt
 from quality.roboflow_inference import model_img_prediction, generate_response_based_upon_result, \
@@ -44,7 +44,7 @@ if "t_shirt_size" not in st.session_state:
     st.session_state.t_shirt_size = ''
 if "context" not in st.session_state:
     st.session_state.context = ''
-st.set_option('deprecation.showfileUploaderEncoding', False)
+
 
 img_file = None
 
