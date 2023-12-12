@@ -7,7 +7,7 @@ from PIL import Image, ImageOps
 from streamlit_chat import message
 import os
 import shutil
-from llm.llm_response import ai_introduction, run_llm
+from llm.llm_response import ai_introduction, run_llm, secret_key
 from llm.llm_sizing import generate_sizing_category_for_issue, generate_response_based_upon_sizing_calculations
 from models.box import Box
 from models.t_shirt_size_chart import t_shirt_size_chart_ratio, t_shirt_size_chart_length
@@ -33,19 +33,19 @@ if "llm_response" not in st.session_state:
 if "chat_messages" not in st.session_state:
     st.session_state["chat_messages"] = []
 if "issue_category" not in st.session_state:
-    st.session_state.issue_category = ''
+    st.session_state.issue_category = 'sizing'
 if "generated_issue" not in st.session_state:
     st.session_state.generated_issue = ''
 if "sizing_category" not in st.session_state:
     st.session_state.sizing_category = ''
 if "sizing_fist_ref" not in st.session_state:
     st.session_state.sizing_fist_ref = False
-if "t_shirt_size" not in st.session_state:
-    st.session_state.t_shirt_size = ''
 if "context" not in st.session_state:
     st.session_state.context = ''
+if "auth" not in st.session_state:
+    st.session_state.auth = False
 
-
+SECRET_KEYS = ["flexli", "Bewakoof.com"]
 img_file = None
 
 # Upload an image and set some options for demo purposes
@@ -63,7 +63,10 @@ MOBILE_WIDTH = 7.3
 # heck_images = st.sidebar.button(label="Check Images")
 # ownload_images = st.sidebar.button(label="Download Images")
 # Initial Message
-message(ai_introduction, key=i.__str__())
+if(st.session_state.auth):
+    message(ai_introduction, key=i.__str__())
+else:
+    message(secret_key, key=i.__str__())
 
 # if st.session_state["chat_answers_history"]:
 #    for generated_response, user_query in zip(st.session_state["chat_answers_history"],
@@ -90,19 +93,21 @@ def is_image_file(filename):
 
 #st.session_state.issue_category = 'sizing'
 #st.session_state.sizing_fist_ref = False
-if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False:
-    st.write("Below tshirt image is just for demonstration how to capture image")
-    sample_image = Image.open("sizing/sample_sizing_image.jpg")
-    st.image(sample_image, caption="Sample Image", width=300)
+if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False and st.session_state.auth:
+
     st.write(
-        "For this demonstration, if you don't have a relevant T-shirt, feel free to download any suitable T-shirt image or a zip folder with multiple images  with your expected size "
-        "by clicking the link below. Afterward, please upload the chosen image to continue with the conversation.")
-    if st.button("Check Tshirt with sizes"):
+        "For this demonstration, if you don't have a relevant T-shirt, you can use our catalogue to fetch any tshirt image. Please click on Catalogue button below."
+        " Afterward, please upload the chosen image to continue with the conversation.")
+    if st.button("Our Catalogue"):
         st.markdown(
             f'<a href="https://drive.google.com/drive/folders/1aS2MKUiXdXOWOF_KAGoHb2zkifddQ4ah">Click here to open the URL in a new tab</a>',
             unsafe_allow_html=True)
     sizing_img = st.file_uploader(label='Upload Image of your tshirt', type=['png', 'jpg', 'zip'], key="img_file")
-    st.session_state.t_shirt_size = st.text_input("Please enter size  of your tshirt in Capital. Example: L")
+
+    st.write("In case you plan to use any of your tshirt. Please take an image of tshirt like below from a distance of approximate 3ft")
+    sample_image = Image.open("sizing/sample_sizing_image.jpg")
+    st.image(sample_image, caption="Sample Image", width=300)
+
 
     #if sizing_img:
         #st.write(sizing_img.type)
@@ -133,7 +138,7 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     img.save(img_name)
                     chest_length, shoulder_length, tshirt_length = calculate_lengths_for_image(img_name)
                     context = get_context_based_upon_lengths(chest_length, shoulder_length,
-                                                             tshirt_length, st.session_state.t_shirt_size)
+                                                             tshirt_length)
                     break
 
                 except Exception as e:
@@ -339,7 +344,17 @@ if st.session_state.issue_category == 'quality':
 
 
 def submit(elseif=None):
+
     with st.spinner("Generating response...."):
+        if st.session_state.auth == False :
+            if (st.session_state.widget  in SECRET_KEYS):
+                st.session_state.auth = True
+                return
+            else:
+                st.write("Sorry your key is not correct. Please try again")
+                return
+
+
         #print("Session State " + str(st.session_state))
         st.session_state.issue_category = ""
         cust_query = st.session_state.widget

@@ -12,14 +12,27 @@ def calculate_lengths_for_image(t_shirt_img):
         corrected_predictions)
     return chest_length, shoulder_length, tshirt_length
 
-def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length, tshirt_size):
+def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length):
 
-    chest_min, chest_max,chest_threshold_min, chest_threshold_max = t_shirt_size_chart_length[tshirt_size]['chest'][0], \
-        t_shirt_size_chart_length[tshirt_size]['chest'][1],t_shirt_size_chart_length[tshirt_size]['chest'][2],t_shirt_size_chart_length[tshirt_size]['chest'][3]
-    shoulder_min, shoulder_max, shoulder_threshold_min, shoulder_threshold_max = t_shirt_size_chart_length[tshirt_size]['shoulder'][0], \
-        t_shirt_size_chart_length[tshirt_size]['shoulder'][1], t_shirt_size_chart_length[tshirt_size]['shoulder'][2], t_shirt_size_chart_length[tshirt_size]['shoulder'][3]
-    tshirt_min, tshirt_max, tshirt_threshold_min, tshirt_threshold_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
-        t_shirt_size_chart_length[tshirt_size]['tshirt'][1],t_shirt_size_chart_length[tshirt_size]['tshirt'][2], t_shirt_size_chart_length[tshirt_size]['tshirt'][3]
+    tshirt_size = ["S", "M", "L", "XL", "XXL"]
+
+    for size in tshirt_size:
+        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
+            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
+        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
+            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
+        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
+            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
+
+
+
+
+    # chest_min, chest_max,chest_threshold_min, chest_threshold_max = t_shirt_size_chart_length[tshirt_size]['chest'][0], \
+    #     t_shirt_size_chart_length[tshirt_size]['chest'][1],t_shirt_size_chart_length[tshirt_size]['chest'][2],t_shirt_size_chart_length[tshirt_size]['chest'][3]
+    # shoulder_min, shoulder_max, shoulder_threshold_min, shoulder_threshold_max = t_shirt_size_chart_length[tshirt_size]['shoulder'][0], \
+    #     t_shirt_size_chart_length[tshirt_size]['shoulder'][1], t_shirt_size_chart_length[tshirt_size]['shoulder'][2], t_shirt_size_chart_length[tshirt_size]['shoulder'][3]
+    # tshirt_min, tshirt_max, tshirt_threshold_min, tshirt_threshold_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
+    #    t_shirt_size_chart_length[tshirt_size]['tshirt'][1],t_shirt_size_chart_length[tshirt_size]['tshirt'][2], t_shirt_size_chart_length[tshirt_size]['tshirt'][3]
 
     context_pre = (
         'Here is the information available for a tshirt regarding its sizing. Also compulsorily please in the response provide'

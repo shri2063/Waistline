@@ -179,13 +179,13 @@ suffix = """
 User: {query}
 AI: """
 
-
+secret_key = "Please enter your secret key"
 # now create the few shot prompt template
-ai_introduction = "Hello, welcome to Waistline! This platform serves as our Minimum Viable Product (MVP) concept, demonstrating how AI can " \
-                  "assist buyers in addressing sizing or quality concerns. Currently, I am specifically designed to identify sizing and quality" \
-                  " defects in T-shirts. Can you recall a scenario where you purchased a T-shirt from an e-commerce site and were then " \
-                  "encountering size or quality-related issues? You don't actually need to have the T-shirt on hand; I will guide you " \
-                  "through the process. Let's begin the conversation!"
+ai_introduction = "Greetings and welcome to Waistline! This platform functions as our MVP concept, showcasing how AI can aid buyers in determining" \
+                  " the fit of a garment. Presently, I can determine your ideal fitting measurements based on a snapshot of your favorite T-shirt." \
+                  " At this point, my capability is limited to sizing assessments for T-shirts, and it does not extend " \
+                  "to other apparel styles. However, in the near future, I will be equipped to derive body measurements directly from your " \
+                  "full-length image. Stay tuned for upcoming enhancements!"
 
 
 
