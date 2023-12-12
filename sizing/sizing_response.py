@@ -17,12 +17,16 @@ def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length)
     tshirt_size = ["S", "M", "L", "XL", "XXL"]
 
     for size in tshirt_size:
-        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
-            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
-        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
-            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
-        if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
-            context += f"Tshirt's Chest length {chest_length} cm is within  range of {chest_min} cm  and {chest_max}cm. So, correct size for tshirt should be {size} "
+
+        if t_shirt_size_chart_length[size]['shoulder'][0] < shoulder_length < t_shirt_size_chart_length[size]['shoulder'][1]:
+            context += f"Tshirt's Shoulder length {shoulder_length} cm is within  range of { t_shirt_size_chart_length[size]['shoulder'][0]}" \
+                       f" cm  and {t_shirt_size_chart_length[size]['shoulder'][1]}cm. "
+        if t_shirt_size_chart_length[size]['tshirt'][0] < tshirt_length < t_shirt_size_chart_length[size]['tshirt'][1]:
+            context += f"Tshirt's  length {tshirt_length} cm is within  range of {t_shirt_size_chart_length[size]['tshirt'][0]} cm  and " \
+                       f"{t_shirt_size_chart_length[size]['tshirt'][1]}cm. "
+            if t_shirt_size_chart_length[size]['chest'][0] < chest_length < t_shirt_size_chart_length[size]['chest'][1]:
+                context += f"Tshirt's Chest length {chest_length} cm is within  range of {t_shirt_size_chart_length[size]['chest'][0]} cm " \
+                           f" and {t_shirt_size_chart_length[size]['chest'][1]}cm. So, we recommend to select a tshirt of size {size} "
 
 
 
@@ -35,9 +39,7 @@ def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length)
     #    t_shirt_size_chart_length[tshirt_size]['tshirt'][1],t_shirt_size_chart_length[tshirt_size]['tshirt'][2], t_shirt_size_chart_length[tshirt_size]['tshirt'][3]
 
     context_pre = (
-        'Here is the information available for a tshirt regarding its sizing. Also compulsorily please in the response provide'
-        ' actual values along with min and  max values possible. Also if the actual values are in border range'
-        'take that into consideration while resolving query')
+        'Please rephrase as if you are helping user to find correct size. Also compulsorily keep all numerical details')
     context = ''
     if chest_min <= chest_length <= chest_max:
         context += f"Tshirt's Chest length {chest_length} cm is within expected range of {chest_min} cm  and {chest_max}cm. "
@@ -79,7 +81,7 @@ def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length)
         else:
             context += f"Tshirt's  length {tshirt_length} cm is greater than expected range of {tshirt_max}cm and {tshirt_max} cm. "
 
-    st.write(context)
+    #st.write(context)
     final = context_pre + context
     return final
 

@@ -114,9 +114,8 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
 
     if st.button('Submit Image'):
 
-        if st.session_state.t_shirt_size not in ('S', 'M', 'L', 'XL', 'XXL'):
-            st.write("Tshirt size is not entered properly. Please select between S,M,L,XL,XXL")
-        elif sizing_img is None:
+
+        if sizing_img is None:
             st.write("please upload an image")
         elif sizing_img.type == "image/jpeg" or sizing_img.type == "image/jpg" \
                 or sizing_img.type == "image/png":
