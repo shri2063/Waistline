@@ -181,11 +181,17 @@ AI: """
 
 secret_key = "Please enter your secret key"
 # now create the few shot prompt template
-ai_introduction = "Greetings and welcome to Waistline! This platform functions as our MVP concept, showcasing how AI can aid buyers in determining" \
-                  " the fit of a garment. Presently, I can determine your ideal fitting measurements based on a snapshot of your favorite T-shirt." \
-                  " At this point, my capability is limited to sizing assessments for T-shirts, and it does not extend " \
-                  "to other apparel styles. However, in the near future, I will be equipped to derive body measurements directly from your " \
-                  "full-length image. Stay tuned for upcoming enhancements!"
+ai_introduction = ("Hi there! This platform serves as our MVP concept, demonstrating how AI can "
+                   "aid buyers in assessing the fit of garments. I'd appreciate it if you "
+                   "could provide an image of your favorite t-shirt to help me understand "
+                   "your preferred fit. Afterwards, you can upload any t-shirt, and I'll be "
+                   "able to suggest how it might fit you")
+
+            #"Presently, I can determine your ideal fitting measurements based on a snapshot of your favorite T-shirt.") \
+            #" At this point, my capability is limited to sizing assessments for T-shirts, and it does not extend " \
+            #"to other apparel styles. However, in the near future, I will be equipped to derive body measurements directly from your " \
+            #"full-length image. Stay tuned for upcoming enhancements!"
+
 
 
 

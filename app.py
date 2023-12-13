@@ -11,8 +11,8 @@ from llm.llm_response import ai_introduction, run_llm, secret_key
 from llm.llm_sizing import generate_sizing_category_for_issue, generate_response_based_upon_sizing_calculations
 from models.box import Box
 from sizing.crawler import get_actual_length_for_tshirt
-from sizing.sizing_response import  calculate_lengths_for_image, \
-    get_context_based_upon_lengths
+from sizing.sizing_response import calculate_lengths_for_image, \
+    get_context_and_user_size_based_upon_lengths, get_recommendations_based_upon_lengths
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue
 
 
@@ -41,6 +41,8 @@ if "sizing_fist_ref" not in st.session_state:
     st.session_state.sizing_fist_ref = False
 if "context" not in st.session_state:
     st.session_state.context = ''
+if "user_size" not in st.session_state:
+    st.session_state.user_size = ''
 if "auth" not in st.session_state:
     st.session_state.auth = False
 
@@ -95,7 +97,7 @@ def is_image_file(filename):
 if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_ref == False and st.session_state.auth:
 
     st.write(
-        "For this demonstration, if you don't have a relevant T-shirt, you can use our catalogue to fetch any tshirt image. Please click on Catalogue button below."
+        "For this demonstratio, you can use our catalogue to fetch any tshirt image. Please click on Catalogue button below."
         " Afterward, please upload the chosen image to continue with the conversation.")
     if st.button("Our Catalogue"):
         st.markdown(
@@ -103,9 +105,9 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
             unsafe_allow_html=True)
     sizing_img = st.file_uploader(label='Upload Image of your tshirt', type=['png', 'jpg', 'zip'], key="img_file")
 
-    st.write("In case you plan to use any of your tshirt. Please take an image of tshirt like below from a distance of approximate 3ft")
-    sample_image = Image.open("sizing/sample_sizing_image.jpg")
-    st.image(sample_image, caption="Sample Image", width=300)
+    #st.write("In case you plan to use any of your tshirt. Please take an image of tshirt like below from a distance of approximate 3ft")
+    #sample_image = Image.open("sizing/sample_sizing_image.jpg")
+    #st.image(sample_image, caption="Sample Image", width=300)
 
 
     #if sizing_img:
@@ -135,8 +137,16 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     img_name = 'sizing/resize/sizing_img_' + str(width) + ".jpg"
                     img.save(img_name)
                     chest_length, shoulder_length, tshirt_length = calculate_lengths_for_image(img_name)
-                    context = get_context_based_upon_lengths(chest_length, shoulder_length,
-                                                             tshirt_length)
+                    if st.session_state.user_size == '':
+                        context, size = get_context_and_user_size_based_upon_lengths(chest_length, shoulder_length,
+                                                                                     tshirt_length)
+                        st.session_state.user_size = size
+
+
+                    else:
+                        context = get_recommendations_based_upon_lengths(chest_length, shoulder_length,
+                                                                                     tshirt_length, st.session_state.user_size)
+
                     break
 
                 except Exception as e:
@@ -204,8 +214,8 @@ if st.session_state.issue_category == 'sizing' and st.session_state.sizing_fist_
                     print("Shoulder Avg: ", shoulder_avg)
                     tshirt_avg = round((sum(TSHIRT) / len(TSHIRT)) * 1.0, 2)
                     print("Tshirt Avg: ", tshirt_avg )
-                    context = get_context_based_upon_lengths(chest_avg, shoulder_avg,
-                                                             tshirt_avg, st.session_state.t_shirt_size)
+                    context = get_context_and_user_size_based_upon_lengths(chest_avg, shoulder_avg,
+                                                                           tshirt_avg, st.session_state.t_shirt_size)
 
         else:
             st.warning("Unsupported file type. Please upload an image (PNG or JPEG) or a ZIP file.")
