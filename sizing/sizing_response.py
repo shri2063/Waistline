@@ -29,10 +29,12 @@ def get_context_and_user_size_based_upon_lengths(chest_length, shoulder_length, 
         if t_shirt_size_chart_length[size]['tshirt'][0] < tshirt_length <= t_shirt_size_chart_length[size]['tshirt'][1]:
             context += f"Tshirt's  length {tshirt_length} cm is within  range of {t_shirt_size_chart_length[size]['tshirt'][0]} cm  and " \
                        f"{t_shirt_size_chart_length[size]['tshirt'][1]}cm. "
-            user_size = size
-            if t_shirt_size_chart_length[size]['chest'][0] < chest_length <= t_shirt_size_chart_length[size]['chest'][1]:
-                context += f"Tshirt's Chest length {chest_length} cm is within  range of {t_shirt_size_chart_length[size]['chest'][0]} cm " \
+
+        if t_shirt_size_chart_length[size]['chest'][0] < chest_length <= t_shirt_size_chart_length[size]['chest'][1]:
+            context += f"Tshirt's Chest length {chest_length} cm is within  range of {t_shirt_size_chart_length[size]['chest'][0]} cm " \
                            f" and {t_shirt_size_chart_length[size]['chest'][1]}cm. So, we recommend to select a tshirt of size {size} "
+            user_size = size
+
 
 
 
