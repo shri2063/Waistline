@@ -10,8 +10,7 @@ import shutil
 from llm.llm_response import ai_introduction, run_llm, secret_key
 from llm.llm_sizing import generate_sizing_category_for_issue, generate_response_based_upon_sizing_calculations
 from models.box import Box
-from models.t_shirt_size_chart import t_shirt_size_chart_ratio, t_shirt_size_chart_length
-from sizing.crawler import build_t_shirt_key_points, get_ratios_for_tshirt, get_actual_length_for_tshirt
+from sizing.crawler import get_actual_length_for_tshirt
 from sizing.sizing_response import  calculate_lengths_for_image, \
     get_context_based_upon_lengths
 from sizing.yolo_model_prediction import model_json_prediction_for_sizing_issue

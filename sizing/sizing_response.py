@@ -16,6 +16,10 @@ def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length)
 
     tshirt_size = ["S", "M", "L", "XL", "XXL"]
 
+    context_pre = (
+        'Please rephrase as if you are helping user to find correct size. Also compulsorily keep all numerical details')
+
+    context =''
     for size in tshirt_size:
 
         if t_shirt_size_chart_length[size]['shoulder'][0] < shoulder_length < t_shirt_size_chart_length[size]['shoulder'][1]:
@@ -38,50 +42,48 @@ def get_context_based_upon_lengths(chest_length, shoulder_length, tshirt_length)
     # tshirt_min, tshirt_max, tshirt_threshold_min, tshirt_threshold_max = t_shirt_size_chart_length[tshirt_size]['tshirt'][0], \
     #    t_shirt_size_chart_length[tshirt_size]['tshirt'][1],t_shirt_size_chart_length[tshirt_size]['tshirt'][2], t_shirt_size_chart_length[tshirt_size]['tshirt'][3]
 
-    context_pre = (
-        'Please rephrase as if you are helping user to find correct size. Also compulsorily keep all numerical details')
-    context = ''
-    if chest_min <= chest_length <= chest_max:
-        context += f"Tshirt's Chest length {chest_length} cm is within expected range of {chest_min} cm  and {chest_max}cm. "
-    elif chest_length < chest_min:
-        if chest_length > chest_threshold_min:
-            context += f"Although Tshirt's Chest length {chest_length}  cm is below expected range of {chest_min} cm  and {chest_max}cm, still it seems to be acceptable value. "
-
-        else:
-            context += f"Tshirt's Chest length {chest_length}  cm is below expected range of {chest_min} cm  and {chest_max}cm. "
-    elif chest_length > chest_max:
-        if chest_length < chest_threshold_max:
-            context += f"Although Tshirt's Chest length {chest_length}  cm is above  expected range of {chest_min} cm  and {chest_max}cm, still it seems to be acceptable value. "
-        else:
-            context += f"Tshirt's Chest length {chest_length} cm is greater than expected range of {chest_min} cm  and {chest_max}cm.  "
-
-    if shoulder_min <= shoulder_length <= shoulder_max:
-        context += f"Tshirt's Shoulder length {shoulder_length} cm is within expected range  of {shoulder_min} cm and {shoulder_max} cm. "
-    elif shoulder_length < shoulder_min:
-        if shoulder_length > shoulder_threshold_min:
-            context += f"Although Tshirt's Shoulder length {shoulder_length}  cm is below expected range of {shoulder_min} cm  and {shoulder_max}cm, still it seems to be acceptable value. "
-        else:
-            context += f"Tshirt's Shoulder length {shoulder_length} cm is lesser than expected range of {shoulder_min} cm and {shoulder_max} cm . "
-    elif shoulder_length > shoulder_max:
-        if shoulder_length < shoulder_threshold_max:
-            context += f"Although Tshirt's Shoulder length {shoulder_length}  cm is above  expected range of {shoulder_min} cm  and {shoulder_max} cm, still it seems to be acceptable value. "
-        else:
-            context += f"Tshirt's Shoulder length {shoulder_length} cm is greater than expected range of {shoulder_max}cm and {shoulder_max} cm. "
-
-    if tshirt_min <= tshirt_length <= tshirt_max:
-        context += f"Tshirt's  length {tshirt_length} cm is within expected range  of {tshirt_min} cm and {tshirt_max} cm. "
-    elif tshirt_length < tshirt_min:
-        if tshirt_length < tshirt_threshold_min:
-            context += f"Although Tshirt's  length {tshirt_length}  cm is below  expected range of {tshirt_min} cm  and {tshirt_max} cm, still it seems to be acceptable value. "
-        else:
-            context += f"Tshirt's  length {tshirt_length} cm is lesser than expected range of {tshirt_min}cm and {tshirt_max} cm. "
-    elif tshirt_length > tshirt_max:
-        if tshirt_length < tshirt_threshold_max:
-            context += f"Although Tshirt's  length {tshirt_length}  cm is above  expected range of {tshirt_min} cm  and {tshirt_max} cm, still it seems to be acceptable value. "
-        else:
-            context += f"Tshirt's  length {tshirt_length} cm is greater than expected range of {tshirt_max}cm and {tshirt_max} cm. "
-
-    #st.write(context)
+   # context = ''
+    # if chest_min <= chest_length <= chest_max:
+    #     context += f"Tshirt's Chest length {chest_length} cm is within expected range of {chest_min} cm  and {chest_max}cm. "
+    # elif chest_length < chest_min:
+    #     if chest_length > chest_threshold_min:
+    #         context += f"Although Tshirt's Chest length {chest_length}  cm is below expected range of {chest_min} cm  and {chest_max}cm, still it seems to be acceptable value. "
+    #
+    #     else:
+    #         context += f"Tshirt's Chest length {chest_length}  cm is below expected range of {chest_min} cm  and {chest_max}cm. "
+    # elif chest_length > chest_max:
+    #     if chest_length < chest_threshold_max:
+    #         context += f"Although Tshirt's Chest length {chest_length}  cm is above  expected range of {chest_min} cm  and {chest_max}cm, still it seems to be acceptable value. "
+    #     else:
+    #         context += f"Tshirt's Chest length {chest_length} cm is greater than expected range of {chest_min} cm  and {chest_max}cm.  "
+    #
+    # if shoulder_min <= shoulder_length <= shoulder_max:
+    #     context += f"Tshirt's Shoulder length {shoulder_length} cm is within expected range  of {shoulder_min} cm and {shoulder_max} cm. "
+    # elif shoulder_length < shoulder_min:
+    #     if shoulder_length > shoulder_threshold_min:
+    #         context += f"Although Tshirt's Shoulder length {shoulder_length}  cm is below expected range of {shoulder_min} cm  and {shoulder_max}cm, still it seems to be acceptable value. "
+    #     else:
+    #         context += f"Tshirt's Shoulder length {shoulder_length} cm is lesser than expected range of {shoulder_min} cm and {shoulder_max} cm . "
+    # elif shoulder_length > shoulder_max:
+    #     if shoulder_length < shoulder_threshold_max:
+    #         context += f"Although Tshirt's Shoulder length {shoulder_length}  cm is above  expected range of {shoulder_min} cm  and {shoulder_max} cm, still it seems to be acceptable value. "
+    #     else:
+    #         context += f"Tshirt's Shoulder length {shoulder_length} cm is greater than expected range of {shoulder_max}cm and {shoulder_max} cm. "
+    #
+    # if tshirt_min <= tshirt_length <= tshirt_max:
+    #     context += f"Tshirt's  length {tshirt_length} cm is within expected range  of {tshirt_min} cm and {tshirt_max} cm. "
+    # elif tshirt_length < tshirt_min:
+    #     if tshirt_length < tshirt_threshold_min:
+    #         context += f"Although Tshirt's  length {tshirt_length}  cm is below  expected range of {tshirt_min} cm  and {tshirt_max} cm, still it seems to be acceptable value. "
+    #     else:
+    #         context += f"Tshirt's  length {tshirt_length} cm is lesser than expected range of {tshirt_min}cm and {tshirt_max} cm. "
+    # elif tshirt_length > tshirt_max:
+    #     if tshirt_length < tshirt_threshold_max:
+    #         context += f"Although Tshirt's  length {tshirt_length}  cm is above  expected range of {tshirt_min} cm  and {tshirt_max} cm, still it seems to be acceptable value. "
+    #     else:
+    #         context += f"Tshirt's  length {tshirt_length} cm is greater than expected range of {tshirt_max}cm and {tshirt_max} cm. "
+    #
+    st.write(context)
     final = context_pre + context
     return final
 
